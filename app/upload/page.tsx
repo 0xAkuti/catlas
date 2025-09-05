@@ -3,8 +3,11 @@
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { CatNftCard } from "@/components/nft/CatNftCard";
+import { ImageCropper } from "@/components/upload/Cropper";
+import exifr from "exifr";
+import { compressToJpegSquare } from "@/lib/image/process";
 
-type UploadStep = "select" | "analyzing" | "result";
+type UploadStep = "select" | "crop" | "analyzing" | "result";
 
 export default function UploadPage() {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -12,6 +15,7 @@ export default function UploadPage() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [step, setStep] = useState<UploadStep>("select");
   const [analysis, setAnalysis] = useState<any | null>(null);
+  const [gps, setGps] = useState<{ lat: number; lng: number } | null>(null);
 
   return (
     <section className="py-8">
@@ -29,11 +33,25 @@ export default function UploadPage() {
                 type="file"
                 accept="image/*"
                 capture="environment"
-                onChange={(e) => {
+                onChange={async (e) => {
                   const file = e.target.files?.[0] || null;
                   setSelectedFile(file);
                   if (previewUrl) URL.revokeObjectURL(previewUrl);
-                  setPreviewUrl(file ? URL.createObjectURL(file) : null);
+                  const url = file ? URL.createObjectURL(file) : null;
+                  setPreviewUrl(url);
+                  if (file) {
+                    try {
+                      const exif = await exifr.gps(file);
+                      if (exif && exif.latitude && exif.longitude) {
+                        setGps({ lat: exif.latitude, lng: exif.longitude });
+                      } else {
+                        setGps(null);
+                      }
+                    } catch {
+                      setGps(null);
+                    }
+                    setStep("crop");
+                  }
                 }}
               />
               {selectedFile && (
@@ -42,17 +60,6 @@ export default function UploadPage() {
                 </p>
               )}
             </div>
-
-            {previewUrl && (
-              <div className="rounded-lg border overflow-hidden">
-                {/* Placeholder for future square crop UI */}
-                <img
-                  src={previewUrl}
-                  alt="Selected preview"
-                  className="w-full h-auto max-h-[360px] object-contain bg-muted"
-                />
-              </div>
-            )}
 
             <div className="flex gap-3">
               <Button
@@ -71,7 +78,7 @@ export default function UploadPage() {
                   const res = await fetch("/api/analyze", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ imageBase64: base64 }),
+                    body: JSON.stringify({ imageBase64: base64, gps }),
                   });
                   const json = await res.json();
                   setAnalysis(json?.result || null);
@@ -91,6 +98,26 @@ export default function UploadPage() {
                 Clear
               </Button>
             </div>
+          </div>
+        )}
+
+        {step === "crop" && previewUrl && (
+          <div className="rounded-lg border overflow-hidden">
+            <ImageCropper
+              imageUrl={previewUrl}
+              onCancel={() => {
+                setStep("select");
+              }}
+              onCropped={async (blob) => {
+                const compressed = await compressToJpegSquare(blob, 1024);
+                const file = new File([compressed], "cropped.jpg", { type: "image/jpeg" });
+                setSelectedFile(file);
+                if (previewUrl) URL.revokeObjectURL(previewUrl);
+                const nextUrl = URL.createObjectURL(file);
+                setPreviewUrl(nextUrl);
+                setStep("select");
+              }}
+            />
           </div>
         )}
 
