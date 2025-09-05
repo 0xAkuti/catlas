@@ -20,6 +20,35 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Environment variables
+
+Create a `.env.local` file with:
+
+```
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+
+# OpenRouter via OpenAI SDK
+OPENROUTER_API_KEY=sk-or-xxxx
+OPENROUTER_MODEL=google/gemini-2.5-flash
+
+# IPFS (web3.storage)
+WEB3_STORAGE_TOKEN=
+
+# Supabase (local dev)
+NEXT_PUBLIC_SUPABASE_URL=http://localhost:54321
+NEXT_PUBLIC_SUPABASE_ANON_KEY=dev_anon_key
+
+# Wallet (Privy)
+NEXT_PUBLIC_PRIVY_APP_ID=
+
+# Chain config (Base by default)
+NEXT_PUBLIC_CHAIN_ID=8453
+NEXT_PUBLIC_RPC_URL=https://mainnet.base.org
+
+# Charity payout address (also settable at contract deploy time)
+CHARITY_PAYOUT_ADDRESS=0x0000000000000000000000000000000000000000
+```
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
