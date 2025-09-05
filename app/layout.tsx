@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Ubuntu, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import Providers from "@/components/providers/PrivyProvider";
+import AuthButtons from "@/components/auth/AuthButtons";
 
 const ubuntu = Ubuntu({
   variable: "--font-geist-sans",
@@ -28,7 +30,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${ubuntu.variable} ${geistMono.variable} font-sans antialiased`}>
-        <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <Providers>
+          <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
           <div className="mx-auto max-w-screen-md md:max-w-screen-lg lg:max-w-screen-xl px-4 py-3 flex items-center justify-between">
             <Link href="/" className="font-semibold text-lg tracking-tight">
               WorldCat
@@ -40,12 +43,14 @@ export default function RootLayout({
               <Link href="/upload" className="hover:underline">
                 Upload
               </Link>
+              <AuthButtons />
             </nav>
           </div>
-        </header>
-        <main className="mx-auto max-w-screen-md md:max-w-screen-lg lg:max-w-screen-xl px-4">
+          </header>
+          <main className="mx-auto max-w-screen-md md:max-w-screen-lg lg:max-w-screen-xl px-4">
           {children}
-        </main>
+          </main>
+        </Providers>
       </body>
     </html>
   );
