@@ -7,6 +7,7 @@ import { ImageCropper } from "@/components/upload/Cropper";
 import exifr from "exifr";
 import { compressToJpegSquare } from "@/lib/image/process";
 import { Progress } from "@/components/ui/progress";
+import { Input } from "@/components/ui/input";
 
 type UploadStep = "select" | "crop" | "analyzing" | "result";
 
@@ -19,6 +20,7 @@ export default function UploadPage() {
   const [gps, setGps] = useState<{ lat: number; lng: number } | null>(null);
   const [progress, setProgress] = useState<number>(0);
   const [location, setLocation] = useState<{ city?: string; country?: string } | null>(null);
+  const [title, setTitle] = useState<string>("");
 
   return (
     <section className="py-8">
@@ -109,6 +111,7 @@ export default function UploadPage() {
                   });
                   const json = await res.json();
                   setAnalysis(json?.result || null);
+                  if (json?.result?.title) setTitle(json.result.title);
                   setStep("result");
                   setProgress(100);
                 }}
@@ -163,8 +166,16 @@ export default function UploadPage() {
         {step === "result" && (
           <div className="flex flex-col gap-4">
             <div className="mx-auto w-full max-w-md">
+              <div className="mb-3">
+                <label className="text-sm font-medium">Title</label>
+                <Input
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="Enter a title for this cat"
+                />
+              </div>
               <CatNftCard
-                classification={analysis || { isCat: false }}
+                classification={{ ...(analysis || { isCat: false }), title }}
                 imageUrl={previewUrl}
                 location={location || undefined}
               />
@@ -172,12 +183,44 @@ export default function UploadPage() {
             <div className="flex gap-3">
               <Button onClick={() => setStep("select")}>Back</Button>
               <Button
+                onClick={async () => {
+                  if (!selectedFile || !analysis?.isCat) return;
+                  // Build metadata JSON
+                  const metadata = {
+                    name: title || analysis.title || "Untitled Cat",
+                    description: analysis.sceneDescription || "",
+                    attributes: [
+                      { trait_type: "Breed", value: analysis.breed || "Unknown" },
+                      { trait_type: "Color", value: analysis.color || "Unknown" },
+                      analysis.pattern ? { trait_type: "Pattern", value: analysis.pattern } : null,
+                      analysis.bodyType ? { trait_type: "Body Type", value: analysis.bodyType } : null,
+                      analysis.eyeColor ? { trait_type: "Eyes", value: analysis.eyeColor } : null,
+                      analysis.pose ? { trait_type: "Pose", value: analysis.pose } : null,
+                      location?.city || location?.country
+                        ? { trait_type: "Location", value: `${location?.city || ""}${location?.city && location?.country ? ", " : ""}${location?.country || ""}` }
+                        : null,
+                    ].filter(Boolean),
+                  };
+
+                  const form = new FormData();
+                  form.append("image", selectedFile);
+                  form.append("metadata", JSON.stringify(metadata));
+                  const resp = await fetch("/api/ipfs/upload", { method: "POST", body: form });
+                  const data = await resp.json();
+                  // TODO: show success and proceed to publish flow
+                  console.log("Uploaded to IPFS CID:", data.cid);
+                }}
+              >
+                Publish (IPFS)
+              </Button>
+              <Button
                 variant="secondary"
                 onClick={() => {
                   setSelectedFile(null);
                   if (previewUrl) URL.revokeObjectURL(previewUrl);
                   setPreviewUrl(null);
                   setAnalysis(null);
+                  setTitle("");
                   setStep("select");
                 }}
               >
