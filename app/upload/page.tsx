@@ -8,6 +8,11 @@ import exifr from "exifr";
 import { compressToJpegSquare } from "@/lib/image/process";
 import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
+import { worldCat1155Abi } from "@/lib/web3/abi/WorldCat1155";
+import { getPublicClient } from "@/lib/web3/client";
+import { usePrivy, useWallets } from "@privy-io/react-auth";
+import { createWalletClient, custom } from "viem";
+import { base } from "viem/chains";
 
 type UploadStep = "select" | "crop" | "analyzing" | "result";
 
@@ -21,6 +26,8 @@ export default function UploadPage() {
   const [progress, setProgress] = useState<number>(0);
   const [location, setLocation] = useState<{ city?: string; country?: string } | null>(null);
   const [title, setTitle] = useState<string>("");
+  const { authenticated } = usePrivy();
+  const { wallets } = useWallets();
 
   return (
     <section className="py-8">
@@ -207,11 +214,26 @@ export default function UploadPage() {
                   form.append("metadata", JSON.stringify(metadata));
                   const resp = await fetch("/api/ipfs/upload", { method: "POST", body: form });
                   const data = await resp.json();
-                  // TODO: show success and proceed to publish flow
-                  console.log("Uploaded to IPFS CID:", data.cid);
+                  if (!data?.cid) return;
+
+                  // On-chain publishCat
+                  if (!authenticated || !wallets[0]) return;
+                  const provider = await wallets[0].getEthereumProvider?.();
+                  if (!provider) return;
+                  const walletClient = createWalletClient({ chain: base, transport: custom(provider) });
+                  const contractAddress = process.env.NEXT_PUBLIC_WORLDCAT1155_ADDRESS as `0x${string}`;
+                  if (!contractAddress) return;
+                  const account = wallets[0].address as `0x${string}`;
+                  await walletClient.writeContract({
+                    account,
+                    address: contractAddress,
+                    abi: worldCat1155Abi,
+                    functionName: "publishCat",
+                    args: [data.cid],
+                  });
                 }}
               >
-                Publish (IPFS)
+                Publish
               </Button>
               <Button
                 variant="secondary"
