@@ -6,6 +6,7 @@ import { CatNftCard } from "@/components/nft/CatNftCard";
 import { ImageCropper } from "@/components/upload/Cropper";
 import exifr from "exifr";
 import { compressToJpegSquare } from "@/lib/image/process";
+import { Progress } from "@/components/ui/progress";
 
 type UploadStep = "select" | "crop" | "analyzing" | "result";
 
@@ -16,6 +17,7 @@ export default function UploadPage() {
   const [step, setStep] = useState<UploadStep>("select");
   const [analysis, setAnalysis] = useState<any | null>(null);
   const [gps, setGps] = useState<{ lat: number; lng: number } | null>(null);
+  const [progress, setProgress] = useState<number>(0);
 
   return (
     <section className="py-8">
@@ -25,6 +27,14 @@ export default function UploadPage() {
       </p>
 
       <div className="mt-6">
+        <div className="mb-4">
+          <Progress value={
+            step === "select" ? 10 :
+            step === "crop" ? 40 :
+            step === "analyzing" ? 75 :
+            100
+          } />
+        </div>
         {step === "select" && (
           <div className="flex flex-col gap-4">
             <div>
@@ -67,6 +77,7 @@ export default function UploadPage() {
                 onClick={async () => {
                   if (!selectedFile) return;
                   setStep("analyzing");
+                  setProgress(75);
                   setAnalysis(null);
                   const buffer = await selectedFile.arrayBuffer();
                   const base64 = btoa(
@@ -83,6 +94,7 @@ export default function UploadPage() {
                   const json = await res.json();
                   setAnalysis(json?.result || null);
                   setStep("result");
+                  setProgress(100);
                 }}
               >
                 Analyze
