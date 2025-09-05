@@ -4,6 +4,7 @@ pragma solidity ^0.8.24;
 import {ERC1155} from "solady/tokens/ERC1155.sol";
 import {Ownable} from "solady/auth/Ownable.sol";
 import {LibString} from "solady/utils/LibString.sol";
+import {SafeTransferLib} from "solady/utils/SafeTransferLib.sol";
 
 /// @title WorldCat1155
 /// @notice ERC1155 collection where each cat is a token ID with its own URI.
@@ -57,12 +58,11 @@ contract WorldCat1155 is ERC1155, Ownable {
 
         _mint(msg.sender, tokenId, amount, "");
 
-        // Equal split between contract owner, creator, and charity.
+        // Equal split between contract owner, creator, and charity (using SafeTransferLib).
         uint256 share = msg.value / 3;
-        (bool s1, ) = owner().call{value: share}("");
-        (bool s2, ) = creatorOf[tokenId].call{value: share}("");
-        (bool s3, ) = charity.call{value: msg.value - share - share}("");
-        require(s1 && s2 && s3, "PAYOUT_FAIL");
+        SafeTransferLib.forceSafeTransferETH(owner(), share);
+        SafeTransferLib.forceSafeTransferETH(creatorOf[tokenId], share);
+        SafeTransferLib.forceSafeTransferETH(charity, msg.value - share - share);
     }
 
     /// @notice Update the fixed mint price. Owner only.
