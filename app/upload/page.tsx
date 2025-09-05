@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { CatNftCard } from "@/components/nft/CatNftCard";
 
 type UploadStep = "select" | "analyzing" | "result";
 
@@ -104,26 +105,9 @@ export default function UploadPage() {
 
         {step === "result" && (
           <div className="flex flex-col gap-4">
-            {previewUrl && (
-              <div className="rounded-lg border overflow-hidden">
-                <img
-                  src={previewUrl}
-                  alt="Analyzed preview"
-                  className="w-full h-auto max-h-[360px] object-contain bg-muted"
-                />
-              </div>
-            )}
-            <div className="rounded-lg border p-4 text-xs whitespace-pre-wrap bg-muted/20">
-              {analysis ? JSON.stringify(analysis, null, 2) : "No result"}
-            </div>
+            <CatNftCard classification={analysis || { isCat: false }} imageUrl={previewUrl} />
             <div className="flex gap-3">
-              <Button
-                onClick={() => {
-                  setStep("select");
-                }}
-              >
-                Back
-              </Button>
+              <Button onClick={() => setStep("select")}>Back</Button>
               <Button
                 variant="secondary"
                 onClick={() => {
