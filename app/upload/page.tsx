@@ -1,11 +1,15 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { Button } from "@/components/ui/button";
+
+type UploadStep = "select" | "analyzing" | "result";
 
 export default function UploadPage() {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [step, setStep] = useState<UploadStep>("select");
   const [analysis, setAnalysis] = useState<any | null>(null);
 
   return (
@@ -15,56 +19,126 @@ export default function UploadPage() {
         Upload a photo or capture one. We’ll extract GPS if available.
       </p>
 
-      <div className="mt-6 flex flex-col gap-4">
-        <div>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            capture="environment"
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              setSelectedFileName(file ? file.name : null);
-            }}
-          />
-          {selectedFileName && (
-            <p className="mt-2 text-xs text-muted-foreground">
-              Selected: {selectedFileName}
-            </p>
-          )}
-        </div>
+      <div className="mt-6">
+        {step === "select" && (
+          <div className="flex flex-col gap-4">
+            <div>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                capture="environment"
+                onChange={(e) => {
+                  const file = e.target.files?.[0] || null;
+                  setSelectedFile(file);
+                  if (previewUrl) URL.revokeObjectURL(previewUrl);
+                  setPreviewUrl(file ? URL.createObjectURL(file) : null);
+                }}
+              />
+              {selectedFile && (
+                <p className="mt-2 text-xs text-muted-foreground">
+                  Selected: {selectedFile.name}
+                </p>
+              )}
+            </div>
 
-        <button
-          className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 disabled:opacity-50 disabled:pointer-events-none bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2"
-          disabled={isAnalyzing}
-          onClick={async () => {
-            const file = fileInputRef.current?.files?.[0];
-            if (!file) return;
-            setIsAnalyzing(true);
-            setAnalysis(null);
-            const buffer = await file.arrayBuffer();
-            const base64 = btoa(
-              new Uint8Array(buffer).reduce(
-                (acc, byte) => acc + String.fromCharCode(byte),
-                "",
-              ),
-            );
-            const res = await fetch("/api/analyze", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ imageBase64: base64 }),
-            });
-            const json = await res.json();
-            setAnalysis(json?.result || null);
-            setIsAnalyzing(false);
-          }}
-        >
-          {isAnalyzing ? "Analyzing..." : "Analyze"}
-        </button>
+            {previewUrl && (
+              <div className="rounded-lg border overflow-hidden">
+                {/* Placeholder for future square crop UI */}
+                <img
+                  src={previewUrl}
+                  alt="Selected preview"
+                  className="w-full h-auto max-h-[360px] object-contain bg-muted"
+                />
+              </div>
+            )}
 
-        <div className="rounded-lg border min-h-40 bg-muted/20 p-4 text-xs whitespace-pre-wrap">
-          {analysis ? JSON.stringify(analysis, null, 2) : "Results will appear here."}
-        </div>
+            <div className="flex gap-3">
+              <Button
+                disabled={!selectedFile}
+                onClick={async () => {
+                  if (!selectedFile) return;
+                  setStep("analyzing");
+                  setAnalysis(null);
+                  const buffer = await selectedFile.arrayBuffer();
+                  const base64 = btoa(
+                    new Uint8Array(buffer).reduce(
+                      (acc, byte) => acc + String.fromCharCode(byte),
+                      "",
+                    ),
+                  );
+                  const res = await fetch("/api/analyze", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ imageBase64: base64 }),
+                  });
+                  const json = await res.json();
+                  setAnalysis(json?.result || null);
+                  setStep("result");
+                }}
+              >
+                Analyze
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  setSelectedFile(null);
+                  if (previewUrl) URL.revokeObjectURL(previewUrl);
+                  setPreviewUrl(null);
+                }}
+              >
+                Clear
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {step === "analyzing" && (
+          <div className="flex flex-col items-center gap-4">
+            <div className="rounded-lg border w-full h-48 bg-muted/20 flex items-center justify-center text-sm text-muted-foreground">
+              Analyzing image...
+            </div>
+            <p className="text-xs text-muted-foreground">This may take a few seconds.</p>
+          </div>
+        )}
+
+        {step === "result" && (
+          <div className="flex flex-col gap-4">
+            {previewUrl && (
+              <div className="rounded-lg border overflow-hidden">
+                <img
+                  src={previewUrl}
+                  alt="Analyzed preview"
+                  className="w-full h-auto max-h-[360px] object-contain bg-muted"
+                />
+              </div>
+            )}
+            <div className="rounded-lg border p-4 text-xs whitespace-pre-wrap bg-muted/20">
+              {analysis ? JSON.stringify(analysis, null, 2) : "No result"}
+            </div>
+            <div className="flex gap-3">
+              <Button
+                onClick={() => {
+                  setStep("select");
+                }}
+              >
+                Back
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  setSelectedFile(null);
+                  if (previewUrl) URL.revokeObjectURL(previewUrl);
+                  setPreviewUrl(null);
+                  setAnalysis(null);
+                  setStep("select");
+                }}
+              >
+                Analyze another
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );
