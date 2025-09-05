@@ -27,7 +27,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${ubuntu.variable} ${geistMono.variable} antialiased`}>
+      <body className={`${ubuntu.variable} ${geistMono.variable} font-sans antialiased`}>
         <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
           <div className="mx-auto max-w-screen-md md:max-w-screen-lg lg:max-w-screen-xl px-4 py-3 flex items-center justify-between">
             <Link href="/" className="font-semibold text-lg tracking-tight">
