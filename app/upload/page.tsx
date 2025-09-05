@@ -144,7 +144,13 @@ export default function UploadPage() {
 
         {step === "result" && (
           <div className="flex flex-col gap-4">
-            <CatNftCard classification={analysis || { isCat: false }} imageUrl={previewUrl} />
+            <div className="mx-auto w-full max-w-md">
+              <CatNftCard
+                classification={analysis || { isCat: false }}
+                imageUrl={previewUrl}
+                location={gps ? { city: `${gps.lat.toFixed(5)}, ${gps.lng.toFixed(5)}` } : undefined}
+              />
+            </div>
             <div className="flex gap-3">
               <Button onClick={() => setStep("select")}>Back</Button>
               <Button
