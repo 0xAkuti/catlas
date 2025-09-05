@@ -18,6 +18,7 @@ export default function UploadPage() {
   const [analysis, setAnalysis] = useState<any | null>(null);
   const [gps, setGps] = useState<{ lat: number; lng: number } | null>(null);
   const [progress, setProgress] = useState<number>(0);
+  const [location, setLocation] = useState<{ city?: string; country?: string } | null>(null);
 
   return (
     <section className="py-8">
@@ -54,11 +55,26 @@ export default function UploadPage() {
                       const exif = await exifr.gps(file);
                       if (exif && exif.latitude && exif.longitude) {
                         setGps({ lat: exif.latitude, lng: exif.longitude });
+                        try {
+                          const resp = await fetch(
+                            `/api/geocode/reverse?lat=${exif.latitude}&lon=${exif.longitude}`,
+                          );
+                          if (resp.ok) {
+                            const loc = await resp.json();
+                            setLocation(loc);
+                          } else {
+                            setLocation(null);
+                          }
+                        } catch {
+                          setLocation(null);
+                        }
                       } else {
                         setGps(null);
+                        setLocation(null);
                       }
                     } catch {
                       setGps(null);
+                      setLocation(null);
                     }
                     setStep("crop");
                   }
@@ -105,6 +121,8 @@ export default function UploadPage() {
                   setSelectedFile(null);
                   if (previewUrl) URL.revokeObjectURL(previewUrl);
                   setPreviewUrl(null);
+                  setGps(null);
+                  setLocation(null);
                 }}
               >
                 Clear
@@ -148,7 +166,7 @@ export default function UploadPage() {
               <CatNftCard
                 classification={analysis || { isCat: false }}
                 imageUrl={previewUrl}
-                location={gps ? { city: `${gps.lat.toFixed(5)}, ${gps.lng.toFixed(5)}` } : undefined}
+                location={location || undefined}
               />
             </div>
             <div className="flex gap-3">
