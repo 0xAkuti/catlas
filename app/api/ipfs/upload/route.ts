@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createWeb3StorageClient } from "@/lib/ipfs/client";
+import { createPinataClient } from "@/lib/ipfs/client";
 
 export async function POST(req: NextRequest) {
   try {
@@ -10,13 +10,24 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing image or metadata" }, { status: 400 });
     }
 
-    const client = createWeb3StorageClient();
-    const files: File[] = [];
-    files.push(new File([image], "image.jpg", { type: image.type || "image/jpeg" }));
-    files.push(new File([metadata], "metadata.json", { type: "application/json" }));
+    const pinata = createPinataClient();
+    // 1) Upload image -> get image CID
+    const imageFile = new File([image], "image.jpg", { type: image.type || "image/jpeg" });
+    const imageRes = await pinata.upload.public.file(imageFile);
+    const imageCid = imageRes.cid || imageRes.IpfsHash || imageRes.requestid || imageRes.id; // handle SDK response variants
 
-    const cid = await client.put(files, { wrapWithDirectory: true, name: "worldcat-upload" });
-    return NextResponse.json({ cid });
+    // 2) Patch metadata.image to ipfs://imageCid
+    let parsed: any;
+    try {
+      parsed = JSON.parse(metadata);
+    } catch {
+      return NextResponse.json({ error: "Invalid metadata" }, { status: 400 });
+    }
+    parsed.image = `ipfs://${imageCid}`;
+    const metadataFile = new File([JSON.stringify(parsed)], "metadata.json", { type: "application/json" });
+    const metadataRes = await pinata.upload.public.file(metadataFile);
+    const cid = metadataRes.cid || metadataRes.IpfsHash || metadataRes.requestid || metadataRes.id;
+    return NextResponse.json({ cid, imageCid });
   } catch (err) {
     console.error("/api/ipfs/upload error", err);
     return NextResponse.json({ error: "Internal error" }, { status: 500 });

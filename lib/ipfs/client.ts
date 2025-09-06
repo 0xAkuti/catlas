@@ -1,11 +1,10 @@
-import { Web3Storage } from "web3.storage";
+import { PinataSDK } from "pinata";
 
-export function createWeb3StorageClient() {
-  const token = process.env.WEB3_STORAGE_TOKEN;
-  if (!token) {
-    console.warn("WEB3_STORAGE_TOKEN not set. IPFS uploads will fail.");
-  }
-  return new Web3Storage({ token: token || "" });
+export function createPinataClient() {
+  const jwt = process.env.PINATA_JWT;
+  const gateway = process.env.PINATA_GATEWAY || ""; // e.g. mygateway.mypinata.cloud
+  if (!jwt) console.warn("PINATA_JWT not set. IPFS uploads will fail.");
+  return new PinataSDK({ pinataJwt: jwt || "", pinataGateway: gateway });
 }
 
 

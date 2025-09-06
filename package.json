@@ -22,6 +22,7 @@
     "motion": "^12.23.12",
     "next": "15.5.2",
     "openai": "^4.104.0",
+    "pinata": "^2.5.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-easy-crop": "^5.5.0",
