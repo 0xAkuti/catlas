@@ -219,139 +219,170 @@ export default function UploadPage() {
 
         {step === "result" && (
           <div className="flex flex-col gap-4">
-            <div className="mx-auto w-full max-w-md">
-              <div className="mb-3">
-                <label className="text-sm font-medium">Title</label>
-                <Input
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder="Enter a title for this cat"
-                />
+            {analysis?.isCat === false ? (
+              <div className="mx-auto w-full max-w-md">
+                <div className="rounded-md border border-red-300 bg-red-50 p-4 text-red-900">
+                  <h3 className="mb-1 text-sm font-semibold">Not a cat</h3>
+                  <p className="text-sm">{analysis?.sceneDescription || "The uploaded image does not appear to be a cat."}</p>
+                </div>
+                <div className="mt-4 flex justify-center gap-3">
+                  <Button
+                    variant="secondary"
+                    onClick={() => {
+                      analyzeIdRef.current++;
+                      if (previewUrl) URL.revokeObjectURL(previewUrl);
+                      setSelectedFile(null);
+                      setPreviewUrl(null);
+                      setAnalysis(null);
+                      setTitle("");
+                      setStep("select");
+                    }}
+                  >
+                    Try another image
+                  </Button>
+                  <Button
+                    onClick={() => router.push("/discover")}
+                  >
+                    Explore cats
+                  </Button>
+                </div>
               </div>
-              <CatNftCard
-                classification={{
-                  isCat: analysis?.isCat === true,
-                  title,
-                  breed: analysis?.breed,
-                  color: analysis?.color,
-                  pattern: analysis?.pattern,
-                  bodyType: analysis?.bodyType,
-                  eyeColor: analysis?.eyeColor,
-                  pose: analysis?.pose,
-                  sceneDescription: analysis?.sceneDescription,
-                }}
-                imageUrl={previewUrl}
-                location={location || undefined}
-              />
-            </div>
-            <div className="flex justify-center gap-3">
-              <Button variant="secondary" onClick={() => setStep("select")}>Back</Button>
-              <Button
-                size="lg"
-                className="h-11 px-6 shadow-lg hover:shadow-xl"
-                onClick={async () => {
-                  if (!selectedFile || !analysis?.isCat) return;
-                  // Build metadata JSON
-                  const metadata = {
-                    name: title || analysis.title || "Untitled Cat",
-                    description: analysis.sceneDescription || "",
-                    // Custom fields for frontend consumption
-                    location_city: location?.city || undefined,
-                    location_country: location?.country || undefined,
-                    latitude: gps?.lat || undefined,
-                    longitude: gps?.lng || undefined,
-                    attributes: [
-                      { trait_type: "Breed", value: analysis.breed || "Unknown" },
-                      { trait_type: "Color", value: analysis.color || "Unknown" },
-                      analysis.pattern ? { trait_type: "Pattern", value: analysis.pattern } : null,
-                      analysis.bodyType ? { trait_type: "Body Type", value: analysis.bodyType } : null,
-                      analysis.eyeColor ? { trait_type: "Eyes", value: analysis.eyeColor } : null,
-                      analysis.pose ? { trait_type: "Pose", value: analysis.pose } : null,
-                      location?.city || location?.country
-                        ? { trait_type: "Location", value: `${location?.city || ""}${location?.city && location?.country ? ", " : ""}${location?.country || ""}` }
-                        : null,
-                    ].filter(Boolean),
-                  };
-
-                  const form = new FormData();
-                  form.append("image", selectedFile);
-                  form.append("metadata", JSON.stringify(metadata));
-                  const resp = await fetch("/api/ipfs/upload", { method: "POST", body: form });
-                  const data = await resp.json();
-                  if (!data?.cid) return;
-
-                  // On-chain publishCat
-                  if (!authenticated || !wallets[0]) return;
-                  const provider = await wallets[0].getEthereumProvider?.();
-                  if (!provider) return;
-                  const walletClient = createWalletClient({ chain: catlasChain, transport: custom(provider) });
-                  const contractAddress = process.env.NEXT_PUBLIC_WORLDCAT1155_ADDRESS as `0x${string}`;
-                  if (!contractAddress) return;
-                  const account = wallets[0].address as `0x${string}`;
-                  const hash = await walletClient.writeContract({
-                    chain: catlasChain,
-                    account,
-                    address: contractAddress,
-                    abi: worldCat1155Abi,
-                    functionName: "publishCat",
-                    args: [data.cid],
-                  });
-                  const publicClient = getPublicClient();
-                  const receipt = await publicClient.waitForTransactionReceipt({ hash });
-                  let newId: number | null = null;
-                  for (const lg of receipt.logs) {
-                    try {
-                      const ev = decodeEventLog({ abi: worldCat1155Abi, data: lg.data, topics: lg.topics }) as { eventName: string; args: { tokenId: bigint } };
-                      if (ev.eventName === "CatPublished") {
-                        newId = Number(ev.args.tokenId as bigint);
-                        break;
-                      }
-                    } catch {}
-                  }
-                  if (newId !== null) {
-                    // Upsert into Supabase index
-                    try {
-                      // Use same metadata we used for IPFS, but ensure image is set from imageCid for the DB record
-                      const metadataForDb: Record<string, unknown> = {
-                        ...metadata,
-                        image: data?.imageCid ? `ipfs://${data.imageCid}` : (metadata as Record<string, unknown>)?.image,
+            ) : (
+              <>
+                <div className="mx-auto w-full max-w-md">
+                  <div className="mb-3">
+                    <label className="text-sm font-medium">Title</label>
+                    <Input
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                      placeholder="Enter a title for this cat"
+                    />
+                  </div>
+                  <CatNftCard
+                    classification={{
+                      isCat: analysis?.isCat === true,
+                      title,
+                      breed: analysis?.breed,
+                      color: analysis?.color,
+                      pattern: analysis?.pattern,
+                      bodyType: analysis?.bodyType,
+                      eyeColor: analysis?.eyeColor,
+                      pose: analysis?.pose,
+                      sceneDescription: analysis?.sceneDescription,
+                    }}
+                    imageUrl={previewUrl}
+                    location={location || undefined}
+                  />
+                </div>
+                <div className="flex justify-center gap-3">
+                  <Button variant="secondary" onClick={() => setStep("select")}>Back</Button>
+                  <Button
+                    size="lg"
+                    className="h-11 px-6 shadow-lg hover:shadow-xl"
+                    onClick={async () => {
+                      if (!selectedFile || !analysis?.isCat) return;
+                      // Build metadata JSON
+                      const metadata = {
+                        name: title || analysis.title || "Untitled Cat",
+                        description: analysis.sceneDescription || "",
+                        // Custom fields for frontend consumption
+                        location_city: location?.city || undefined,
+                        location_country: location?.country || undefined,
+                        latitude: gps?.lat || undefined,
+                        longitude: gps?.lng || undefined,
+                        attributes: [
+                          { trait_type: "Breed", value: analysis.breed || "Unknown" },
+                          { trait_type: "Color", value: analysis.color || "Unknown" },
+                          analysis.pattern ? { trait_type: "Pattern", value: analysis.pattern } : null,
+                          analysis.bodyType ? { trait_type: "Body Type", value: analysis.bodyType } : null,
+                          analysis.eyeColor ? { trait_type: "Eyes", value: analysis.eyeColor } : null,
+                          analysis.pose ? { trait_type: "Pose", value: analysis.pose } : null,
+                          location?.city || location?.country
+                            ? { trait_type: "Location", value: `${location?.city || ""}${location?.city && location?.country ? ", " : ""}${location?.country || ""}` }
+                            : null,
+                        ].filter(Boolean),
                       };
-                      await fetch("/api/cats/index", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                          tokenId: newId,
-                          creator: account,
-                          name: metadataForDb.name,
-                          city: metadataForDb.location_city,
-                          country: metadataForDb.location_country,
-                          latitude: metadataForDb.latitude,
-                          longitude: metadataForDb.longitude,
-                          cid: data.cid,
-                          metadata: metadataForDb,
-                        }),
+
+                      const form = new FormData();
+                      form.append("image", selectedFile);
+                      form.append("metadata", JSON.stringify(metadata));
+                      const resp = await fetch("/api/ipfs/upload", { method: "POST", body: form });
+                      const data = await resp.json();
+                      if (!data?.cid) return;
+
+                      // On-chain publishCat
+                      if (!authenticated || !wallets[0]) return;
+                      const provider = await wallets[0].getEthereumProvider?.();
+                      if (!provider) return;
+                      const walletClient = createWalletClient({ chain: catlasChain, transport: custom(provider) });
+                      const contractAddress = process.env.NEXT_PUBLIC_WORLDCAT1155_ADDRESS as `0x${string}`;
+                      if (!contractAddress) return;
+                      const account = wallets[0].address as `0x${string}`;
+                      const hash = await walletClient.writeContract({
+                        chain: catlasChain,
+                        account,
+                        address: contractAddress,
+                        abi: worldCat1155Abi,
+                        functionName: "publishCat",
+                        args: [data.cid],
                       });
-                    } catch {}
-                    const explorerBase = catlasChain?.blockExplorers?.default?.url;
-                    const txUrl = explorerBase ? `${explorerBase}/tx/${hash}` : undefined;
-                    toast.success("Cat published!", {
-                      description: `Token #${newId} was created successfully`,
-                      action: txUrl ? {
-                        label: "View Tx",
-                        onClick: () => {
-                          window.open(txUrl, "_blank");
-                        }
-                      } : undefined,
-                    });
-                    router.push(`/cat/${newId}`);
-                  }
-                }}
-              >
-                <Rocket className="mr-2 h-4 w-4" />
-                Publish
-              </Button>
-              
-            </div>
+                      const publicClient = getPublicClient();
+                      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+                      let newId: number | null = null;
+                      for (const lg of receipt.logs) {
+                        try {
+                          const ev = decodeEventLog({ abi: worldCat1155Abi, data: lg.data, topics: lg.topics }) as { eventName: string; args: { tokenId: bigint } };
+                          if (ev.eventName === "CatPublished") {
+                            newId = Number(ev.args.tokenId as bigint);
+                            break;
+                          }
+                        } catch {}
+                      }
+                      if (newId !== null) {
+                        // Upsert into Supabase index
+                        try {
+                          // Use same metadata we used for IPFS, but ensure image is set from imageCid for the DB record
+                          const metadataForDb: Record<string, unknown> = {
+                            ...metadata,
+                            image: data?.imageCid ? `ipfs://${data.imageCid}` : (metadata as Record<string, unknown>)?.image,
+                          };
+                          await fetch("/api/cats/index", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                              tokenId: newId,
+                              creator: account,
+                              name: metadataForDb.name,
+                              city: metadataForDb.location_city,
+                              country: metadataForDb.location_country,
+                              latitude: metadataForDb.latitude,
+                              longitude: metadataForDb.longitude,
+                              cid: data.cid,
+                              metadata: metadataForDb,
+                            }),
+                          });
+                        } catch {}
+                        const explorerBase = catlasChain?.blockExplorers?.default?.url;
+                        const txUrl = explorerBase ? `${explorerBase}/tx/${hash}` : undefined;
+                        toast.success("Cat published!", {
+                          description: `Token #${newId} was created successfully`,
+                          action: txUrl ? {
+                            label: "View Tx",
+                            onClick: () => {
+                              window.open(txUrl, "_blank");
+                            }
+                          } : undefined,
+                        });
+                        router.push(`/cat/${newId}`);
+                      }
+                    }}
+                  >
+                    <Rocket className="mr-2 h-4 w-4" />
+                    Publish
+                  </Button>
+                </div>
+              </>
+            )}
           </div>
         )}
       </div>
