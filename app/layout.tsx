@@ -5,6 +5,9 @@ import { Ubuntu, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/providers/PrivyProvider";
 import AuthButtons from "@/components/auth/AuthButtons";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
+import { Menu } from "lucide-react";
 import { AppToaster } from "@/components/ui/sonner";
 
 const ubuntu = Ubuntu({
@@ -62,7 +65,7 @@ export default function RootLayout({
               />
               Catlas
             </Link>
-            <nav className="flex items-center gap-4 text-sm">
+            <nav className="hidden sm:flex items-center gap-4 text-sm">
               <Link href="/discover" className="hover:underline">
                 Discover
               </Link>
@@ -74,6 +77,34 @@ export default function RootLayout({
               </Link>
               <AuthButtons />
             </nav>
+            <div className="sm:hidden">
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="icon" aria-label="Open menu">
+                    <Menu className="h-5 w-5" />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="right" className="w-64">
+                  <SheetHeader>
+                    <SheetTitle>Menu</SheetTitle>
+                  </SheetHeader>
+                  <div className="mt-4 px-4 flex flex-col gap-3 text-sm">
+                    <Link href="/discover" className="hover:underline">
+                      Discover
+                    </Link>
+                    <Link href="/leaderboard" className="hover:underline">
+                      Leaderboard
+                    </Link>
+                    <Link href="/upload" className="hover:underline">
+                      Upload
+                    </Link>
+                    <div className="pt-2 border-t">
+                      <AuthButtons />
+                    </div>
+                  </div>
+                </SheetContent>
+              </Sheet>
+            </div>
           </div>
           </header>
           <main className="mx-auto max-w-screen-md md:max-w-screen-lg lg:max-w-screen-xl px-4">
