@@ -12,7 +12,7 @@ async function getCharityBalance(): Promise<string | null> {
     const addr = (await client.readContract({
       address: contract,
       abi: worldCat1155Abi,
-      functionName: "charityAddress",
+      functionName: "charity",
       args: [],
     })) as `0x${string}`;
     const wei = await client.getBalance({ address: addr });
@@ -48,13 +48,11 @@ export default async function Home() {
             Discover
           </Link>
         </div>
-        {donation !== null && (
-          <div className="mt-6 flex items-center justify-center">
-            <Card className="px-4 py-2 text-sm">
-              Total donations to charity: <span className="font-semibold">{donation}</span>
-            </Card>
-          </div>
-        )}
+        <div className="mt-6 flex items-center justify-center">
+          <Card className="px-4 py-2 text-sm">
+            Total donations to charity: <span className="font-semibold">{donation ?? "-"}</span>
+          </Card>
+        </div>
       </div>
       <div className="mx-auto mt-12 max-w-5xl">
         <Globe />

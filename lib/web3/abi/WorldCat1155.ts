@@ -49,7 +49,7 @@ export const worldCat1155Abi = [
   },
   {
     type: "function",
-    name: "charityAddress",
+    name: "charity",
     stateMutability: "view",
     inputs: [],
     outputs: [{ name: "", type: "address" }],
