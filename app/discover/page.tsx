@@ -23,7 +23,7 @@ export default async function DiscoverPage({ searchParams }: { searchParams: Pro
       <p className="mt-2 text-sm text-muted-foreground">Explore recently published cats.</p>
       <Controls q={q} sort={sort} />
       <div className="mt-6 grid gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-2 relative z-10">
           {/* Map Client Component */}
           {/* @ts-expect-error Server/Client boundary */}
           <DiscoverMap items={items} />

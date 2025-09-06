@@ -23,7 +23,7 @@ export default function DiscoverMap({ items }: { items: Item[] }) {
   }, []);
 
   return (
-    <div className="rounded-lg border overflow-hidden">
+    <div className="rounded-lg border overflow-hidden z-0">
       <MapContainer center={[20, 0]} zoom={2} style={{ height: 400, width: "100%" }}>
         <TileLayer url="https://basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}{r}.png" attribution="&copy; OpenStreetMap contributors &copy; CARTO" />
         {items.filter((i) => typeof i.latitude === "number" && typeof i.longitude === "number").map((i) => (
