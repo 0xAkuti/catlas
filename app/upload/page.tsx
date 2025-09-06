@@ -60,6 +60,7 @@ export default function UploadPage() {
           <div className="flex flex-col gap-4">
             <ImageUploader onSelected={async (file, preview) => {
               // Reset analysis state for a fresh upload
+              analyzeIdRef.current++;
               setAnalysis(null);
               setTitle("");
               setSelectedFile(file);
@@ -348,6 +349,7 @@ export default function UploadPage() {
               <Button
                 variant="secondary"
                 onClick={() => {
+                  analyzeIdRef.current++;
                   setSelectedFile(null);
                   if (previewUrl) URL.revokeObjectURL(previewUrl);
                   setPreviewUrl(null);

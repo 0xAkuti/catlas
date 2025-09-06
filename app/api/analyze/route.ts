@@ -23,17 +23,25 @@ export async function POST(req: NextRequest) {
 
     const model = getOpenRouterModel();
 
+    // Use multimodal message content so the model actually receives the image
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const completion = await openrouter.chat.completions.create({
       model,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       messages: [
-        { role: "system", content: "You are a precise vision assistant." },
+        { role: "system", content: "You are a precise vision assistant." } as any,
         {
           role: "user",
-          content: CAT_CLASSIFICATION_PROMPT + "\n\n[IMAGE]\n" + imageDataUrl,
-        },
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          content: [
+            { type: "text", text: CAT_CLASSIFICATION_PROMPT },
+            { type: "image_url", image_url: imageDataUrl },
+          ] as any,
+        } as any,
       ],
       temperature: 0.2,
-      response_format: { type: "json_object" },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      response_format: { type: "json_object" } as any,
     });
 
     const content = completion.choices?.[0]?.message?.content || "{}";
@@ -44,7 +52,7 @@ export async function POST(req: NextRequest) {
       parsed = { isCat: false, sceneDescription: "Unparseable response" };
     }
 
-    return NextResponse.json({ result: parsed }, { status: 200 });
+    return NextResponse.json({ result: parsed }, { status: 200, headers: { "Cache-Control": "no-store" } });
   } catch (err) {
     console.error("/api/analyze error", err);
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
