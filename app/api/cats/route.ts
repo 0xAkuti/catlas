@@ -10,28 +10,45 @@ export async function GET(req: NextRequest) {
     const creator = searchParams.get("creator");
     const owner = searchParams.get("owner");
 
-    // If owner is requested (collected view), we still fall back to chain balances for now.
+    // If owner is requested (collected view), use Supabase list and filter via balanceOf per token (no log scanning).
     if (owner) {
+      const db = getSupabaseClient();
+      const { data, error } = await db
+        .from("cats")
+        .select("token_id,name,city,country,latitude,longitude,metadata,created_at")
+        .order("created_at", { ascending: false })
+        .limit(200);
+      if (error) throw error;
+
       const client = getPublicClient();
       const address = process.env.NEXT_PUBLIC_WORLDCAT1155_ADDRESS as `0x${string}`;
       if (!address) return NextResponse.json({ items: [] });
 
-      const latest = await client.getBlockNumber();
-      const fromBlock = latest > 5000n ? latest - 5000n : 0n;
-      const logs = await client.getLogs({ address, fromBlock, toBlock: latest });
-      const items: any[] = [];
-      for (const log of logs.slice(-200)) {
-        try {
-          const ev = decodeEventLog({ abi: worldCat1155Abi as any, data: log.data, topics: log.topics }) as any;
-          if (ev.eventName !== "CatPublished") continue;
-          const tokenId = Number(ev.args.tokenId as bigint);
-          const bal = (await client.readContract({ address, abi: worldCat1155Abi as any, functionName: "balanceOf", args: [owner as `0x${string}`, BigInt(tokenId)] })) as bigint;
-          if (bal === 0n) continue;
-          items.push({ tokenId });
-        } catch {}
-      }
-      // Reverse chronological rough order
-      items.reverse();
+      const checks = await Promise.all(
+        (data || []).map(async (row: any) => {
+          try {
+            const bal = (await client.readContract({
+              address,
+              abi: worldCat1155Abi as any,
+              functionName: "balanceOf",
+              args: [owner as `0x${string}`, BigInt(row.token_id)],
+            })) as bigint;
+            if (bal > 0n) {
+              return {
+                tokenId: row.token_id,
+                name: row.name,
+                image: row.metadata?.image,
+                city: row.city,
+                country: row.country,
+                latitude: row.latitude ?? undefined,
+                longitude: row.longitude ?? undefined,
+              };
+            }
+          } catch {}
+          return null;
+        })
+      );
+      const items = checks.filter(Boolean);
       return NextResponse.json({ items });
     }
 
