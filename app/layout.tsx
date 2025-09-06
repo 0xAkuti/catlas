@@ -40,6 +40,9 @@ export default function RootLayout({
               <Link href="/discover" className="hover:underline">
                 Discover
               </Link>
+              <Link href="/leaderboard" className="hover:underline">
+                Leaderboard
+              </Link>
               <Link href="/upload" className="hover:underline">
                 Upload
               </Link>
