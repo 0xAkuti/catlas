@@ -38,6 +38,8 @@ contract Catlas1155 is ERC1155, Ownable {
 
     event CatPublished(uint256 indexed tokenId, address indexed creator, string cid);
     event MintPriceUpdated(uint256 oldPrice, uint256 newPrice);
+    event Liked(address indexed user, uint256 indexed tokenId);
+    event Unliked(address indexed user, uint256 indexed tokenId);
 
     error EmptyCid();
     error TokenDoesNotExist();
@@ -146,9 +148,6 @@ contract Catlas1155 is ERC1155, Ownable {
         }
         emit Unliked(msg.sender, id);
     }
-
-    event Liked(address indexed user, uint256 indexed tokenId);
-    event Unliked(address indexed user, uint256 indexed tokenId);
 }
 
 
