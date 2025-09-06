@@ -34,6 +34,8 @@ export async function GET(_req: NextRequest) {
           image: meta?.image,
           city: meta?.location_city,
           country: meta?.location_country,
+          latitude: typeof meta?.latitude === "number" ? meta.latitude : undefined,
+          longitude: typeof meta?.longitude === "number" ? meta.longitude : undefined,
         });
       } catch {}
     }
