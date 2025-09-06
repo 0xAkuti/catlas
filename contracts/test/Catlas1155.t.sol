@@ -86,6 +86,52 @@ contract Catlas1155Test is Test {
         assertEq(CREATOR.balance, creatorBefore + share);
         assertEq(CHARITY.balance, charityBefore + (price - share - share));
     }
+
+    function test_Like_And_Unlike_Flow() public {
+        vm.prank(CREATOR);
+        uint256 id = wc.publishCat("cid-like");
+
+        // Initially zero likes
+        assertEq(wc.likesOf(id), 0);
+        assertEq(wc.hasLiked(BUYER, id), false);
+
+        // Like emits event and updates state
+        vm.prank(BUYER);
+        vm.expectEmit(true, true, false, true);
+        emit Catlas1155.Liked(BUYER, id);
+        wc.like(id);
+
+        assertEq(wc.likesOf(id), 1);
+        assertEq(wc.hasLiked(BUYER, id), true);
+
+        // Double-like reverts
+        vm.prank(BUYER);
+        vm.expectRevert(Catlas1155.AlreadyLiked.selector);
+        wc.like(id);
+
+        // Unlike emits and updates state
+        vm.prank(BUYER);
+        vm.expectEmit(true, true, false, true);
+        emit Catlas1155.Unliked(BUYER, id);
+        wc.unlike(id);
+        assertEq(wc.likesOf(id), 0);
+        assertEq(wc.hasLiked(BUYER, id), false);
+
+        // Unlike without prior like reverts
+        vm.prank(BUYER);
+        vm.expectRevert(Catlas1155.NotLiked.selector);
+        wc.unlike(id);
+    }
+
+    function test_Like_Revert_TokenDoesNotExist() public {
+        vm.expectRevert(Catlas1155.TokenDoesNotExist.selector);
+        wc.like(999);
+    }
+
+    function test_Unlike_Revert_TokenDoesNotExist() public {
+        vm.expectRevert(Catlas1155.TokenDoesNotExist.selector);
+        wc.unlike(999);
+    }
 }
 
 

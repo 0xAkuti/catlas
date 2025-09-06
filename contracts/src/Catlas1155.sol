@@ -7,6 +7,7 @@ import {LibString} from "solady/utils/LibString.sol";
 import {SafeTransferLib} from "solady/utils/SafeTransferLib.sol";
 
 /// @title Catlas1155
+/// @author akuti (Catlas for EthIstanbul)
 /// @notice Catlas is a collection of 1155 tokens that represent cats 
 /// found around the world.
 contract Catlas1155 is ERC1155, Ownable {
@@ -30,6 +31,11 @@ contract Catlas1155 is ERC1155, Ownable {
     /// @dev Mapping tokenId => total minted supply (no burns supported in this contract).
     mapping(uint256 tokenId => uint256 supply) internal _totalSupply;
 
+    /// @dev Total likes per token id.
+    mapping(uint256 tokenId => uint256 likes) internal _likes;
+    /// @dev Whether a user has liked a token id.
+    mapping(uint256 tokenId => mapping(address user => bool liked)) internal _hasLiked;
+
     event CatPublished(uint256 indexed tokenId, address indexed creator, string cid);
     event MintPriceUpdated(uint256 oldPrice, uint256 newPrice);
 
@@ -38,6 +44,8 @@ contract Catlas1155 is ERC1155, Ownable {
     error InvalidPrice();
     error InvalidAmount();
     error InvalidCharity();
+    error AlreadyLiked();
+    error NotLiked();
 
     constructor(address _owner, address _charity) {
         _initializeOwner(_owner);
@@ -106,6 +114,41 @@ contract Catlas1155 is ERC1155, Ownable {
     function totalSupply(uint256 id) external view returns (uint256) {
         return _totalSupply[id];
     }
+
+    /// @notice Returns total likes for a token id.
+    function likesOf(uint256 id) external view returns (uint256) {
+        return _likes[id];
+    }
+
+    /// @notice Returns whether `user` has liked a token id.
+    function hasLiked(address user, uint256 id) external view returns (bool) {
+        return _hasLiked[id][user];
+    }
+
+    /// @notice Like a token. One like per user per token.
+    function like(uint256 id) external {
+        if (bytes(_tokenCid[id]).length == 0) revert TokenDoesNotExist();
+        if (_hasLiked[id][msg.sender]) revert AlreadyLiked();
+        _hasLiked[id][msg.sender] = true;
+        unchecked {
+            _likes[id] += 1;
+        }
+        emit Liked(msg.sender, id);
+    }
+
+    /// @notice Remove a like previously made by the caller.
+    function unlike(uint256 id) external {
+        if (bytes(_tokenCid[id]).length == 0) revert TokenDoesNotExist();
+        if (!_hasLiked[id][msg.sender]) revert NotLiked();
+        _hasLiked[id][msg.sender] = false;
+        unchecked {
+            _likes[id] -= 1;
+        }
+        emit Unliked(msg.sender, id);
+    }
+
+    event Liked(address indexed user, uint256 indexed tokenId);
+    event Unliked(address indexed user, uint256 indexed tokenId);
 }
 
 
