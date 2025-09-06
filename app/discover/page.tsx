@@ -1,4 +1,4 @@
-import DiscoverCard from "@/components/discover/DiscoverCard";
+import { CatListItem } from "@/components/cats/CatListItem";
 import Controls from "./Controls";
 import DiscoverMap from "./DiscoverMap";
 
@@ -29,11 +29,12 @@ export default async function DiscoverPage({ searchParams }: { searchParams: { q
           {/* @ts-expect-error Server/Client boundary */}
           <DiscoverMap items={items} />
         </div>
-        <div className="grid gap-4">
-        {items.map((it) => (
-          <DiscoverCard key={it.tokenId} item={it} />
-        ))}
-        {!items.length && <div className="text-sm text-muted-foreground">No cats yet.</div>}
+        <div className="grid gap-3">
+          {items.map((it) => (
+            // @ts-expect-error Server/Client boundary
+            <CatListItem key={it.tokenId} item={it} />
+          ))}
+          {!items.length && <div className="text-sm text-muted-foreground">No cats yet.</div>}
         </div>
       </div>
     </section>
