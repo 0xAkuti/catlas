@@ -7,17 +7,15 @@ import {LibString} from "solady/utils/LibString.sol";
 import {SafeTransferLib} from "solady/utils/SafeTransferLib.sol";
 
 /// @title Catlas1155
-/// @notice ERC1155 collection where each cat is a token ID with its own URI.
-///         New cats are published with `publishCat`, which mints 1 to creator.
-///         Anyone can `mint` existing IDs by paying the fixed price.
+/// @notice Catlas 
 contract Catlas1155 is ERC1155, Ownable {
     using LibString for uint256;
 
     /// @dev Next token id to be assigned on `publishCat`.
     uint256 public nextTokenId;
 
-    /// @dev Fixed mint price per token (in wei). Default 0.001 ether.
-    uint256 public mintPrice = 0.001 ether;
+    /// @dev Fixed mint price per token (in wei). Default 0.00001 ether.
+    uint256 public mintPrice = 0.00001 ether;
 
     /// @dev Charity address for revenue split.
     address public immutable charity;
@@ -38,6 +36,16 @@ contract Catlas1155 is ERC1155, Ownable {
         _initializeOwner(_owner);
         require(_charity != address(0), "INVALID_CHARITY");
         charity = _charity;
+    }
+
+    /// @dev Returns the name of the collection.
+    function name() public view override returns (string memory) {
+        return "Catlas";
+    }
+
+    /// @dev Returns the symbol of the collection.
+    function symbol() public view override returns (string memory) {
+        return "CATLAS";
     }
 
     /// @notice Publish a new cat collection.
