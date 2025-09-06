@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ipfsToHttp } from "@/lib/ipfs/gateway";
+import DiscoverMap from "./DiscoverMap";
 
 type Item = { tokenId: number; name?: string; image?: string; city?: string; country?: string; latitude?: number; longitude?: number };
 
