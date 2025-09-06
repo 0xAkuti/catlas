@@ -254,20 +254,24 @@ export default function UploadPage() {
                   if (newId !== null) {
                     // Upsert into Supabase index
                     try {
-                      // Use exact metadata JSON that was uploaded to IPFS (image already patched server-side)
+                      // Use same metadata we used for IPFS, but ensure image is set from imageCid for the DB record
+                      const metadataForDb = {
+                        ...metadata,
+                        image: data?.imageCid ? `ipfs://${data.imageCid}` : (metadata as any).image,
+                      } as any;
                       await fetch("/api/cats/index", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({
                           tokenId: newId,
                           creator: account,
-                          name: metadata.name,
-                          city: metadata.location_city,
-                          country: metadata.location_country,
-                          latitude: metadata.latitude,
-                          longitude: metadata.longitude,
+                          name: metadataForDb.name,
+                          city: metadataForDb.location_city,
+                          country: metadataForDb.location_country,
+                          latitude: metadataForDb.latitude,
+                          longitude: metadataForDb.longitude,
                           cid: data.cid,
-                          metadata,
+                          metadata: metadataForDb,
                         }),
                       });
                     } catch {}
