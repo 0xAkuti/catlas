@@ -24,7 +24,7 @@ const DEFAULT_CONFIG: COBEOptions = {
   markers: [],
 };
 
-export function Globe({ className, config = DEFAULT_CONFIG }: { className?: string; config?: COBEOptions }) {
+export function Globe({ className, config = DEFAULT_CONFIG }: { className?: string; config?: Partial<COBEOptions> }) {
   let phi = 0;
   let width = 0;
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -39,8 +39,10 @@ export function Globe({ className, config = DEFAULT_CONFIG }: { className?: stri
     window.addEventListener("resize", onResize);
     onResize();
 
+    const options = { ...DEFAULT_CONFIG, ...config } as COBEOptions;
+
     const globe = createGlobe(canvasRef.current!, {
-      ...config,
+      ...options,
       width: width * 2,
       height: width * 2,
       onRender: (state) => {

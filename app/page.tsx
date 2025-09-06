@@ -24,8 +24,24 @@ async function getCharityBalance(): Promise<string | null> {
   }
 }
 
+type CatLoc = { latitude?: number; longitude?: number };
+
+async function fetchCatMarkers(): Promise<{ location: [number, number]; size: number }[]> {
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || ""}/api/cats`, { cache: "no-store" });
+    if (!res.ok) return [];
+    const data = await res.json();
+    const items: CatLoc[] = data?.items || [];
+    return items
+      .filter((i) => typeof i.latitude === "number" && typeof i.longitude === "number")
+      .map((i) => ({ location: [i.latitude as number, i.longitude as number] as [number, number], size: 0.06 }));
+  } catch {
+    return [];
+  }
+}
+
 export default async function Home() {
-  const donation = await getCharityBalance();
+  const [donation, markers] = await Promise.all([getCharityBalance(), fetchCatMarkers()]);
   return (
     <section className="relative py-12 sm:py-16 lg:py-20">
       <div className="mx-auto max-w-3xl text-center">
@@ -55,7 +71,7 @@ export default async function Home() {
         </div>
       </div>
       <div className="mx-auto mt-12 max-w-5xl">
-        <Globe />
+        <Globe config={{ markers }} />
       </div>
     </section>
   );
