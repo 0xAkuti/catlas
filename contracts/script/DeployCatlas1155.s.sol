@@ -3,9 +3,9 @@ pragma solidity ^0.8.24;
 
 import {Script} from "forge-std/Script.sol";
 import {console2} from "forge-std/console2.sol";
-import {WorldCat1155} from "../src/WorldCat1155.sol";
+import {Catlas1155} from "../src/Catlas1155.sol";
 
-/// forge script script/DeployWorldCat1155.s.sol:DeployWorldCat1155 \
+/// forge script script/DeployCatlas1155.s.sol:DeployCatlas1155 \
 ///   --rpc-url $RPC_URL --broadcast --verify --verifier blockscout \
 ///   --account <ACCOUNT_ALIAS_OR_ADDRESS> \
 ///   -vvvv
@@ -14,8 +14,8 @@ import {WorldCat1155} from "../src/WorldCat1155.sol";
 /// - CHARITY: address to receive split
 /// Optional:
 /// - OWNER: owner address (defaults to broadcaster when omitted)
-contract DeployWorldCat1155 is Script {
-    function run() external returns (WorldCat1155 deployed) {
+contract DeployCatlas1155 is Script {
+    function run() external returns (Catlas1155 deployed) {
         address charity = vm.envAddress("CHARITY");
         address owner = 0x12d39C23E8323e19FA04bFf5108F059946Ede36e;
 
@@ -26,12 +26,12 @@ contract DeployWorldCat1155 is Script {
         console2.log("Owner:", owner);
         console2.log("Charity:", charity);
 
-        deployed = new WorldCat1155(owner, charity);
+        deployed = new Catlas1155(owner, charity);
         deployed.setMintPrice(0.00001 ether);
 
         vm.stopBroadcast();
 
-        console2.log("WorldCat1155 deployed at:", address(deployed));
+        console2.log("Catlas1155 deployed at:", address(deployed));
     }
 }
 

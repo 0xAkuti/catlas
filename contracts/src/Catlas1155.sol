@@ -6,11 +6,11 @@ import {Ownable} from "solady/auth/Ownable.sol";
 import {LibString} from "solady/utils/LibString.sol";
 import {SafeTransferLib} from "solady/utils/SafeTransferLib.sol";
 
-/// @title WorldCat1155
+/// @title Catlas1155
 /// @notice ERC1155 collection where each cat is a token ID with its own URI.
 ///         New cats are published with `publishCat`, which mints 1 to creator.
 ///         Anyone can `mint` existing IDs by paying the fixed price.
-contract WorldCat1155 is ERC1155, Ownable {
+contract Catlas1155 is ERC1155, Ownable {
     using LibString for uint256;
 
     /// @dev Next token id to be assigned on `publishCat`.

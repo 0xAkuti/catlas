@@ -4,11 +4,11 @@ import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { worldCat1155Abi } from "@/lib/web3/abi/WorldCat1155";
+import { worldCat1155Abi } from "@/lib/web3/abi/Catlas1155";
 import { getPublicClient } from "@/lib/web3/client";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
 import { createWalletClient, custom } from "viem";
-import { worldcatChain } from "@/lib/web3/client";
+import { catlasChain } from "@/lib/web3/client";
 import { toast } from "sonner";
 
 export default function MintDialog({ tokenId }: { tokenId: number }) {
@@ -64,9 +64,9 @@ export default function MintDialog({ tokenId }: { tokenId: number }) {
               if (!authenticated || !wallets[0] || !mintPrice) return;
               const provider = await wallets[0].getEthereumProvider?.();
               if (!provider) return;
-              const walletClient = createWalletClient({ chain: worldcatChain, transport: custom(provider) });
+              const walletClient = createWalletClient({ chain: catlasChain, transport: custom(provider) });
               const hash = await walletClient.writeContract({
-                chain: worldcatChain,
+                chain: catlasChain,
                 account: wallets[0].address as `0x${string}`,
                 address: process.env.NEXT_PUBLIC_WORLDCAT1155_ADDRESS as `0x${string}`,
                 abi: worldCat1155Abi,
@@ -74,7 +74,7 @@ export default function MintDialog({ tokenId }: { tokenId: number }) {
                 args: [BigInt(tokenId), BigInt(amount)],
                 value: total,
               });
-              const explorerBase = worldcatChain?.blockExplorers?.default?.url;
+              const explorerBase = catlasChain?.blockExplorers?.default?.url;
               const txUrl = explorerBase ? `${explorerBase}/tx/${hash}` : undefined;
               toast.success("Mint successful!", {
                 description: `You minted ${amount} token${amount > 1 ? "s" : ""}`,

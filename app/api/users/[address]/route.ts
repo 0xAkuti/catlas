@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseClient } from "@/lib/supabase/client";
 import { getPublicClient } from "@/lib/web3/client";
-import { worldCat1155Abi } from "@/lib/web3/abi/WorldCat1155";
+import { worldCat1155Abi } from "@/lib/web3/abi/Catlas1155";
 
 async function fetchEnsName(address: string): Promise<string | null> {
   try {

@@ -2,19 +2,19 @@
 pragma solidity ^0.8.24;
 
 import {Test} from "forge-std/Test.sol";
-import {WorldCat1155} from "../src/WorldCat1155.sol";
+import {Catlas1155} from "../src/Catlas1155.sol";
 import {Ownable} from "solady/auth/Ownable.sol";
 
-contract WorldCat1155Test is Test {
+contract Catlas1155Test is Test {
     address payable internal OWNER = payable(address(0xA11CE));
     address payable internal CHARITY = payable(address(0xC0FFEE));
     address payable internal CREATOR = payable(address(0xBEEF));
     address payable internal BUYER = payable(address(0xD00D));
 
-    WorldCat1155 internal wc;
+    Catlas1155 internal wc;
 
     function setUp() public {
-        wc = new WorldCat1155(OWNER, CHARITY);
+        wc = new Catlas1155(OWNER, CHARITY);
         // Seed buyer with ETH
         vm.deal(BUYER, 10 ether);
     }

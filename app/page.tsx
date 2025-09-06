@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Globe } from "@/components/magicui/Globe";
 import { Card } from "@/components/ui/card";
 import { getPublicClient } from "@/lib/web3/client";
-import { worldCat1155Abi } from "@/lib/web3/abi/WorldCat1155";
+import { worldCat1155Abi } from "@/lib/web3/abi/Catlas1155";
 
 async function getCharityBalance(): Promise<string | null> {
   try {
@@ -45,7 +45,7 @@ export default async function Home() {
   return (
     <section className="relative py-12 sm:py-16 lg:py-20">
       <div className="mx-auto max-w-3xl text-center">
-        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">WorldCat</h1>
+        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Catlas</h1>
         <p className="mt-4 text-base text-muted-foreground">
           Share cats found around the world. Record or upload a photo, we’ll detect if it’s a cat,
           and help you mint a unique, collectible NFT.

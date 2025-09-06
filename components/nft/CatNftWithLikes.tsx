@@ -7,7 +7,7 @@ import MintDialog from "@/components/nft/MintDialog";
 import { Button } from "@/components/ui/button";
 import { Share2 } from "lucide-react";
 import { getPublicClient } from "@/lib/web3/client";
-import { worldCat1155Abi } from "@/lib/web3/abi/WorldCat1155";
+import { worldCat1155Abi } from "@/lib/web3/abi/Catlas1155";
 
 type Classification = {
   isCat: boolean;

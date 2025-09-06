@@ -3,7 +3,7 @@
     {
       "hash": "0x412b6be8189636a3a154e9767d2032fe792175dd150efd8d2cbad4a4646e55e7",
       "transactionType": "CREATE",
-      "contractName": "WorldCat1155",
+      "contractName": "Catlas1155",
       "contractAddress": "0x6de32d70bba149404b5d6e700d6e754693ecf0fe",
       "function": null,
       "arguments": [
@@ -67,7 +67,7 @@
   "pending": [],
   "returns": {
     "deployed": {
-      "internal_type": "contract WorldCat1155",
+      "internal_type": "contract Catlas1155",
       "value": "0x6dE32D70BbA149404b5D6e700D6E754693eCF0FE"
     }
   },

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getPublicClient } from "@/lib/web3/client";
-import { worldCat1155Abi } from "@/lib/web3/abi/WorldCat1155";
+import { worldCat1155Abi } from "@/lib/web3/abi/Catlas1155";
 import { getSupabaseClient } from "@/lib/supabase/client";
 import { decodeEventLog } from "viem";
 

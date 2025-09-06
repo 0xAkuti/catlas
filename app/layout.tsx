@@ -18,20 +18,20 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "WorldCat",
+  title: "Catlas",
   description:
     "Share cats found around the world. Discover, upload, and mint unique cat NFTs.",
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),
   openGraph: {
-    title: "WorldCat",
+    title: "Catlas",
     description: "Share cats found around the world. Discover, upload, and mint unique cat NFTs.",
     url: "/",
-    siteName: "WorldCat",
+    siteName: "Catlas",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "WorldCat",
+    title: "Catlas",
     description: "Share cats found around the world. Discover, upload, and mint unique cat NFTs.",
   },
 };
@@ -49,7 +49,7 @@ export default function RootLayout({
           <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
           <div className="mx-auto max-w-screen-md md:max-w-screen-lg lg:max-w-screen-xl px-4 py-3 flex items-center justify-between">
             <Link href="/" className="font-semibold text-lg tracking-tight">
-              WorldCat
+              Catlas
             </Link>
             <nav className="flex items-center gap-4 text-sm">
               <Link href="/discover" className="hover:underline">

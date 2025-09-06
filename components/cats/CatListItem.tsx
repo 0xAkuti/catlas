@@ -7,7 +7,7 @@ import { ipfsToHttp } from "@/lib/ipfs/gateway";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
 import { Heart, Layers } from "lucide-react";
 import { getPublicClient } from "@/lib/web3/client";
-import { worldCat1155Abi } from "@/lib/web3/abi/WorldCat1155";
+import { worldCat1155Abi } from "@/lib/web3/abi/Catlas1155";
 
 type Item = { tokenId: number; name?: string; image?: string; city?: string; country?: string };
 

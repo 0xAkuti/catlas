@@ -21,7 +21,7 @@ export const openrouter = new OpenAI({
   defaultHeaders: {
     // Optional, but recommended: app attribution and referer
     "HTTP-Referer": process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
-    "X-Title": "WorldCat",
+    "X-Title": "Catlas",
   },
 });
 

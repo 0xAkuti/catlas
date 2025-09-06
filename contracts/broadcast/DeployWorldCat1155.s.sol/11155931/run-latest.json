@@ -3,7 +3,7 @@
     {
       "hash": "0x31ead10e679d18eb7bea9f89632b20888c6201863dd46ddd1fe979d8ef5ff370",
       "transactionType": "CREATE",
-      "contractName": "WorldCat1155",
+      "contractName": "Catlas1155",
       "contractAddress": "0x1c20357958d7bc90995b4638e008d49f5716d3d7",
       "function": null,
       "arguments": [
@@ -24,7 +24,7 @@
     {
       "hash": "0xf0631de6c79861a7a28437b283d7eb147bc4c63b92cb772badc921b1c60eb5fb",
       "transactionType": "CALL",
-      "contractName": "WorldCat1155",
+      "contractName": "Catlas1155",
       "contractAddress": "0x1c20357958d7bc90995b4638e008d49f5716d3d7",
       "function": "setMintPrice(uint256)",
       "arguments": [
@@ -125,7 +125,7 @@
   "pending": [],
   "returns": {
     "deployed": {
-      "internal_type": "contract WorldCat1155",
+      "internal_type": "contract Catlas1155",
       "value": "0x1C20357958D7Bc90995b4638e008D49F5716d3d7"
     }
   },

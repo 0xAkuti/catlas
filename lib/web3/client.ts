@@ -2,7 +2,7 @@ import { createPublicClient, http } from "viem";
 import { base, anvil } from "viem/chains";
 import { riseTestnet } from 'rise-wallet';
 
-export const worldcatChain = ((): any => {
+export const catlasChain = ((): any => {
   const id = process.env.NEXT_PUBLIC_CHAIN_NAME || 'anvil';
   if (id === 'riseTestnet') return riseTestnet;
   if (id === 'anvil') return anvil;
@@ -11,8 +11,8 @@ export const worldcatChain = ((): any => {
 })();
 
 export function getPublicClient() {
-  const rpc = worldcatChain.rpcUrls?.default?.http?.[0];
-  return createPublicClient({ chain: worldcatChain, transport: http(rpc) });
+  const rpc = catlasChain.rpcUrls?.default?.http?.[0];
+  return createPublicClient({ chain: catlasChain, transport: http(rpc) });
 }
 
 // Wallet client will be created via EIP-1193 provider from Privy when needed

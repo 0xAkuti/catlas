@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { worldCat1155Abi } from "@/lib/web3/abi/WorldCat1155";
+import { worldCat1155Abi } from "@/lib/web3/abi/Catlas1155";
 import { getPublicClient } from "@/lib/web3/client";
 import { ipfsToHttp } from "@/lib/ipfs/gateway";
 import CatNftWithLikes from "@/components/nft/CatNftWithLikes";
@@ -72,8 +72,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     if (!res.ok) return {};
     const meta = await res.json();
     const imageUrl = meta.image ? ipfsToHttp(meta.image) : undefined;
-    const title = meta.name ? `${meta.name} — WorldCat` : `Cat #${idNum} — WorldCat`;
-    const description = meta.description || "Discovered on WorldCat";
+    const title = meta.name ? `${meta.name} — Catlas` : `Cat #${idNum} — Catlas`;
+    const description = meta.description || "Discovered on Catlas";
     return {
       title,
       description,
