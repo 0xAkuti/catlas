@@ -48,6 +48,13 @@ export const worldCat1155Abi = [
     outputs: [{ name: "", type: "uint256" }],
   },
   {
+    type: "function",
+    name: "charityAddress",
+    stateMutability: "view",
+    inputs: [],
+    outputs: [{ name: "", type: "address" }],
+  },
+  {
     type: "event",
     name: "CatPublished",
     inputs: [

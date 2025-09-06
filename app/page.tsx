@@ -2,12 +2,19 @@ import Link from "next/link";
 import { Globe } from "@/components/magicui/Globe";
 import { Card } from "@/components/ui/card";
 import { getPublicClient } from "@/lib/web3/client";
+import { worldCat1155Abi } from "@/lib/web3/abi/WorldCat1155";
 
 async function getCharityBalance(): Promise<string | null> {
   try {
-    const addr = process.env.NEXT_PUBLIC_CHARITY_ADDRESS as `0x${string}` | undefined;
-    if (!addr) return null;
     const client = getPublicClient();
+    const contract = process.env.NEXT_PUBLIC_WORLDCAT1155_ADDRESS as `0x${string}` | undefined;
+    if (!contract) return null;
+    const addr = (await client.readContract({
+      address: contract,
+      abi: worldCat1155Abi,
+      functionName: "charityAddress",
+      args: [],
+    })) as `0x${string}`;
     const wei = await client.getBalance({ address: addr });
     const whole = Number(wei / 1000000000000000000n);
     const frac = Number(wei % 1000000000000000000n) / 1e18;
