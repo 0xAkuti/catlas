@@ -4,6 +4,9 @@ import { getPublicClient } from "@/lib/web3/client";
 import { ipfsToHttp } from "@/lib/ipfs/gateway";
 import CatNftWithLikes from "@/components/nft/CatNftWithLikes";
 import MintDialog from "@/components/nft/MintDialog";
+import { Button } from "@/components/ui/button";
+import { Share2 } from "lucide-react";
+import MintDialog from "@/components/nft/MintDialog";
 
 type Props = { params: { id: string } };
 
@@ -48,7 +51,27 @@ export default async function CatPage({ params }: Props) {
   return (
     <section className="py-8">
       <div className="mx-auto w-full max-w-md">
-        <CatNftWithLikes tokenId={idNum} classification={classification} imageUrl={imageUrl} location={location} />
+        <CatNftWithLikes
+          tokenId={idNum}
+          classification={classification}
+          imageUrl={imageUrl}
+          location={location}
+          actions={
+            <>
+              <MintDialog tokenId={idNum} />
+              <Button
+                variant="secondary"
+                onClick={async () => {
+                  try {
+                    await navigator.clipboard.writeText(`${process.env.NEXT_PUBLIC_APP_URL || ""}/cat/${idNum}`);
+                  } catch {}
+                }}
+              >
+                <Share2 className="w-4 h-4 mr-1" /> Share
+              </Button>
+            </>
+          }
+        />
       </div>
       <div className="mt-4">
         <MintDialog tokenId={idNum} />

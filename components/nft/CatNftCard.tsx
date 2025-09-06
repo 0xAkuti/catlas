@@ -39,6 +39,7 @@ interface CatNftCardProps {
   isLiked?: boolean;
   onLike?: () => void;
   onShare?: () => void;
+  actions?: React.ReactNode; // Rendered below description
 }
 
 export function CatNftCard({
@@ -49,6 +50,7 @@ export function CatNftCard({
   isLiked = false,
   onLike,
   onShare,
+  actions,
 }: CatNftCardProps) {
   return (
     <Card className="overflow-hidden p-0">
@@ -102,6 +104,12 @@ export function CatNftCard({
           <p className="text-sm text-muted-foreground text-center">
             {classification.sceneDescription}
           </p>
+        </div>
+      )}
+
+      {actions && (
+        <div className="px-4 pb-4 flex items-center justify-center gap-3">
+          {actions}
         </div>
       )}
 
