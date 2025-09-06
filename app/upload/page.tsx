@@ -12,8 +12,7 @@ import { worldCat1155Abi } from "@/lib/web3/abi/WorldCat1155";
 import { getPublicClient } from "@/lib/web3/client";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
 import { createWalletClient, custom, decodeEventLog } from "viem";
-import { base, anvil } from "viem/chains";
-import { riseTestnet } from 'rise-wallet';
+import { worldcatChain } from "@/lib/web3/client";
 import { useRouter } from "next/navigation";
 
 type UploadStep = "select" | "crop" | "analyzing" | "result";
@@ -228,12 +227,12 @@ export default function UploadPage() {
                   if (!authenticated || !wallets[0]) return;
                   const provider = await wallets[0].getEthereumProvider?.();
                   if (!provider) return;
-                  // TODO: currently hardcoded to either base or anvil
-                  const walletClient = createWalletClient({ chain: riseTestnet, transport: custom(provider) });
+                  const walletClient = createWalletClient({ chain: worldcatChain, transport: custom(provider) });
                   const contractAddress = process.env.NEXT_PUBLIC_WORLDCAT1155_ADDRESS as `0x${string}`;
                   if (!contractAddress) return;
                   const account = wallets[0].address as `0x${string}`;
                   const hash = await walletClient.writeContract({
+                    chain: worldcatChain,
                     account,
                     address: contractAddress,
                     abi: worldCat1155Abi,

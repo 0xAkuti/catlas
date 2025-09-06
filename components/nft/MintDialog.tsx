@@ -8,8 +8,7 @@ import { worldCat1155Abi } from "@/lib/web3/abi/WorldCat1155";
 import { getPublicClient } from "@/lib/web3/client";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
 import { createWalletClient, custom } from "viem";
-import { base, anvil } from "viem/chains";
-import { riseTestnet } from 'rise-wallet';
+import { worldcatChain } from "@/lib/web3/client";
 
 export default function MintDialog({ tokenId }: { tokenId: number }) {
   const [open, setOpen] = useState(false);
@@ -64,8 +63,9 @@ export default function MintDialog({ tokenId }: { tokenId: number }) {
               if (!authenticated || !wallets[0] || !mintPrice) return;
               const provider = await wallets[0].getEthereumProvider?.();
               if (!provider) return;
-              const walletClient = createWalletClient({ chain: riseTestnet, transport: custom(provider) });
+              const walletClient = createWalletClient({ chain: worldcatChain, transport: custom(provider) });
               await walletClient.writeContract({
+                chain: worldcatChain,
                 account: wallets[0].address as `0x${string}`,
                 address: process.env.NEXT_PUBLIC_WORLDCAT1155_ADDRESS as `0x${string}`,
                 abi: worldCat1155Abi,
