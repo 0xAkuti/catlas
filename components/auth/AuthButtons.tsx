@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
 import { Button } from "@/components/ui/button";
 
@@ -12,9 +13,11 @@ export default function AuthButtons() {
   if (authenticated) {
     return (
       <div className="flex items-center gap-2">
-        <span className="text-xs text-muted-foreground truncate max-w-[140px]">
-          {user?.email?.address || wallets[0]?.address}
-        </span>
+        {wallets[0]?.address && (
+          <Link href={`/u/${wallets[0].address}`} className="text-sm underline">
+            My profile
+          </Link>
+        )}
         <Button variant="secondary" size="sm" onClick={logout}>Logout</Button>
       </div>
     );
