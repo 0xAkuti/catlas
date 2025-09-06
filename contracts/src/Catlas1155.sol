@@ -7,7 +7,8 @@ import {LibString} from "solady/utils/LibString.sol";
 import {SafeTransferLib} from "solady/utils/SafeTransferLib.sol";
 
 /// @title Catlas1155
-/// @notice Catlas 
+/// @notice Catlas is a collection of 1155 tokens that represent cats 
+/// found around the world.
 contract Catlas1155 is ERC1155, Ownable {
     using LibString for uint256;
 
@@ -21,30 +22,36 @@ contract Catlas1155 is ERC1155, Ownable {
     address public immutable charity;
 
     /// @dev Mapping tokenId => metadata content identifier (IPFS CID).
-    mapping(uint256 => string) internal _tokenCid;
+    mapping(uint256 tokenId => string cid) internal _tokenCid;
 
     /// @dev Mapping tokenId => creator address.
-    mapping(uint256 => address) public creatorOf;
+    mapping(uint256 tokenId => address creator) public creatorOf;
 
     /// @dev Mapping tokenId => total minted supply (no burns supported in this contract).
-    mapping(uint256 => uint256) internal _totalSupply;
+    mapping(uint256 tokenId => uint256 supply) internal _totalSupply;
 
     event CatPublished(uint256 indexed tokenId, address indexed creator, string cid);
     event MintPriceUpdated(uint256 oldPrice, uint256 newPrice);
 
+    error EmptyCid();
+    error TokenDoesNotExist();
+    error InvalidPrice();
+    error InvalidAmount();
+    error InvalidCharity();
+
     constructor(address _owner, address _charity) {
         _initializeOwner(_owner);
-        require(_charity != address(0), "INVALID_CHARITY");
+        if (_charity == address(0)) revert InvalidCharity();
         charity = _charity;
     }
 
     /// @dev Returns the name of the collection.
-    function name() public view override returns (string memory) {
+    function name() public pure returns (string memory) {
         return "Catlas";
     }
 
     /// @dev Returns the symbol of the collection.
-    function symbol() public view override returns (string memory) {
+    function symbol() public pure returns (string memory) {
         return "CATLAS";
     }
 
@@ -52,7 +59,7 @@ contract Catlas1155 is ERC1155, Ownable {
     /// @param cid IPFS CID to metadata JSON.
     /// @return tokenId Newly assigned token ID.
     function publishCat(string calldata cid) external returns (uint256 tokenId) {
-        require(bytes(cid).length != 0, "EMPTY_CID");
+        if (bytes(cid).length == 0) revert EmptyCid();
         tokenId = nextTokenId++;
         _tokenCid[tokenId] = cid;
         creatorOf[tokenId] = msg.sender;
@@ -63,12 +70,12 @@ contract Catlas1155 is ERC1155, Ownable {
         emit CatPublished(tokenId, msg.sender, cid);
     }
 
-    /// @notice Mint existing cat token.
+    /// @notice Mint existing catlas tokens.
     function mint(uint256 tokenId, uint256 amount) external payable {
-        require(amount > 0, "AMOUNT_ZERO");
-        require(bytes(_tokenCid[tokenId]).length != 0, "UNKNOWN_TOKEN");
+        if (amount == 0) revert InvalidAmount();
+        if (bytes(_tokenCid[tokenId]).length == 0) revert TokenDoesNotExist();
         uint256 cost = mintPrice * amount;
-        require(msg.value == cost, "INCORRECT_PRICE");
+        if (msg.value != cost) revert InvalidPrice();
 
         _mint(msg.sender, tokenId, amount, "");
         unchecked {
@@ -91,8 +98,7 @@ contract Catlas1155 is ERC1155, Ownable {
     /// @inheritdoc ERC1155
     function uri(uint256 id) public view override returns (string memory) {
         string memory cid = _tokenCid[id];
-        require(bytes(cid).length != 0, "UNKNOWN_TOKEN");
-        // Standard IPFS gateway-neutral URI: ipfs://CID
+        if (bytes(cid).length == 0) revert TokenDoesNotExist();
         return string.concat("ipfs://", cid);
     }
 

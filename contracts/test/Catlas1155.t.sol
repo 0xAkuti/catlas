@@ -31,7 +31,7 @@ contract Catlas1155Test is Test {
     }
 
     function test_DefaultMintPrice() public {
-        assertEq(wc.mintPrice(), 0.001 ether);
+        assertEq(wc.mintPrice(), 0.00001 ether);
     }
 
     function test_SetMintPrice_OnlyOwner() public {
@@ -44,14 +44,14 @@ contract Catlas1155Test is Test {
     }
 
     function test_Mint_RevertUnknownToken() public {
-        vm.expectRevert(bytes("UNKNOWN_TOKEN"));
+        vm.expectRevert(Catlas1155.TokenDoesNotExist.selector);
         wc.mint(999, 1);
     }
 
     function test_Mint_RevertAmountZero() public {
         vm.prank(CREATOR);
         uint256 id = wc.publishCat("cid");
-        vm.expectRevert(bytes("AMOUNT_ZERO"));
+        vm.expectRevert(Catlas1155.InvalidAmount.selector);
         wc.mint(id, 0);
     }
 
@@ -59,7 +59,7 @@ contract Catlas1155Test is Test {
         vm.prank(CREATOR);
         uint256 id = wc.publishCat("cid");
         vm.prank(BUYER);
-        vm.expectRevert(bytes("INCORRECT_PRICE"));
+        vm.expectRevert(Catlas1155.InvalidPrice.selector);
         wc.mint{value: 0}(id, 1);
     }
 
