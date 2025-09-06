@@ -29,14 +29,11 @@ export async function POST(req: NextRequest) {
         { role: "system", content: "You are a precise vision assistant." },
         {
           role: "user",
-          content: [
-            { type: "text", text: CAT_CLASSIFICATION_PROMPT },
-            { type: "image_url", image_url: imageDataUrl },
-          ] as any,
+          content: CAT_CLASSIFICATION_PROMPT + "\n\n[IMAGE]\n" + imageDataUrl,
         },
       ],
       temperature: 0.2,
-      response_format: { type: "json_object" } as any,
+      response_format: { type: "json_object" },
     });
 
     const content = completion.choices?.[0]?.message?.content || "{}";

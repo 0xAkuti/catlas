@@ -17,13 +17,13 @@ export async function POST(req: NextRequest) {
     const imageCid = imageRes.cid || imageRes.id; // handle SDK response variants
 
     // 2) Patch metadata.image to ipfs://imageCid
-    let parsed: any;
+    let parsed: Record<string, unknown>;
     try {
-      parsed = JSON.parse(metadata);
+      parsed = JSON.parse(metadata) as Record<string, unknown>;
     } catch {
       return NextResponse.json({ error: "Invalid metadata" }, { status: 400 });
     }
-    parsed.image = `ipfs://${imageCid}`;
+    (parsed as { image?: string }).image = `ipfs://${imageCid}`;
     const metadataFile = new File([JSON.stringify(parsed)], "metadata.json", { type: "application/json" });
     const metadataRes = await pinata.upload.public.file(metadataFile);
     const cid = metadataRes.cid || metadataRes.id;

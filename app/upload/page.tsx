@@ -23,7 +23,7 @@ export default function UploadPage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [step, setStep] = useState<UploadStep>("select");
-  const [analysis, setAnalysis] = useState<any | null>(null);
+  const [analysis, setAnalysis] = useState<Record<string, any> | null>(null);
   const [gps, setGps] = useState<{ lat: number; lng: number } | null>(null);
   const [progress, setProgress] = useState<number>(0);
   const [location, setLocation] = useState<{ city?: string; country?: string } | null>(null);
@@ -185,7 +185,17 @@ export default function UploadPage() {
                 />
               </div>
               <CatNftCard
-                classification={{ ...(analysis || { isCat: false }), title }}
+                classification={{
+                  isCat: analysis?.isCat === true,
+                  title,
+                  breed: (analysis as any)?.breed,
+                  color: (analysis as any)?.color,
+                  pattern: (analysis as any)?.pattern,
+                  bodyType: (analysis as any)?.bodyType,
+                  eyeColor: (analysis as any)?.eyeColor,
+                  pose: (analysis as any)?.pose,
+                  sceneDescription: (analysis as any)?.sceneDescription,
+                }}
                 imageUrl={previewUrl}
                 location={location || undefined}
               />

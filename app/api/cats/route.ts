@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getPublicClient } from "@/lib/web3/client";
 import { worldCat1155Abi } from "@/lib/web3/abi/Catlas1155";
 import { getSupabaseClient } from "@/lib/supabase/client";
-import { decodeEventLog } from "viem";
+// import { decodeEventLog } from "viem";
 
 export async function GET(req: NextRequest) {
   try {
@@ -27,7 +27,7 @@ export async function GET(req: NextRequest) {
       if (!address) return NextResponse.json({ items: [] });
 
       const checks = await Promise.all(
-        (data || []).map(async (row: any) => {
+        (data || []).map(async (row: { token_id: number; name: string | null; city: string | null; country: string | null; latitude: number | null; longitude: number | null; metadata: { image?: string } | null; }) => {
           try {
             const bal = (await client.readContract({
               address,
@@ -50,7 +50,7 @@ export async function GET(req: NextRequest) {
           return null;
         })
       );
-      const items = checks.filter(Boolean);
+      const items = checks.filter(Boolean) as { tokenId: number; name: string | null; image?: string; city: string | null; country: string | null; latitude?: number; longitude?: number }[];
       return NextResponse.json({ items });
     }
 
@@ -86,7 +86,7 @@ export async function GET(req: NextRequest) {
     }
     const { data, error } = await query;
     if (error) throw error;
-    let items = (data || []).map((row: any) => ({
+    let items = (data || []).map((row: { token_id: number; name: string | null; city: string | null; country: string | null; latitude: number | null; longitude: number | null; metadata: { image?: string } | null; }) => ({
       tokenId: row.token_id,
       name: row.name,
       image: row.metadata?.image || undefined,
@@ -110,7 +110,7 @@ export async function GET(req: NextRequest) {
       items.sort((a, b) => (map.get(b.tokenId) || 0) - (map.get(a.tokenId) || 0));
     }
     return NextResponse.json({ items });
-  } catch (e) {
+  } catch {
     return NextResponse.json({ items: [], error: "failed" }, { status: 500 });
   }
 }

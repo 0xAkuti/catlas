@@ -57,7 +57,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ add
       const contract = process.env.NEXT_PUBLIC_WORLDCAT1155_ADDRESS as `0x${string}`;
       if (contract) {
         const supplies = await Promise.all(
-          discoveredItems.map(async (r: any) => {
+          discoveredItems.map(async (r: { token_id: number }) => {
             try {
               const v = (await client.readContract({
                 address: contract,
@@ -79,7 +79,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ add
   // likes on discovered cats
   let totalLikes = 0;
   if (discoveredItems && discoveredItems.length) {
-    const tokenIds = discoveredItems.map((r: any) => r.token_id);
+    const tokenIds = discoveredItems.map((r: { token_id: number }) => r.token_id);
     // Count likes per token in one query using IN
     const { data: likeRows } = await db
       .from("likes")

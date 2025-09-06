@@ -34,12 +34,12 @@ export default async function CatPage({ params }: Props) {
   const classification = {
     isCat: true,
     title: meta.name,
-    breed: meta.attributes?.find?.((a: any) => a.trait_type === "Breed")?.value,
-    color: meta.attributes?.find?.((a: any) => a.trait_type === "Color")?.value,
-    pattern: meta.attributes?.find?.((a: any) => a.trait_type === "Pattern")?.value,
-    bodyType: meta.attributes?.find?.((a: any) => a.trait_type === "Body Type")?.value,
-    eyeColor: meta.attributes?.find?.((a: any) => a.trait_type === "Eyes")?.value,
-    pose: meta.attributes?.find?.((a: any) => a.trait_type === "Pose")?.value,
+    breed: meta.attributes?.find?.((a: { trait_type: string; value: string }) => a.trait_type === "Breed")?.value,
+    color: meta.attributes?.find?.((a: { trait_type: string; value: string }) => a.trait_type === "Color")?.value,
+    pattern: meta.attributes?.find?.((a: { trait_type: string; value: string }) => a.trait_type === "Pattern")?.value,
+    bodyType: meta.attributes?.find?.((a: { trait_type: string; value: string }) => a.trait_type === "Body Type")?.value,
+    eyeColor: meta.attributes?.find?.((a: { trait_type: string; value: string }) => a.trait_type === "Eyes")?.value,
+    pose: meta.attributes?.find?.((a: { trait_type: string; value: string }) => a.trait_type === "Pose")?.value,
     sceneDescription: meta.description,
   };
   const location = meta.location_city || meta.location_country

@@ -1,8 +1,8 @@
-import { createPublicClient, http } from "viem";
+import { createPublicClient, http, type Chain } from "viem";
 import { base, anvil } from "viem/chains";
 import { riseTestnet } from 'rise-wallet';
 
-export const catlasChain = ((): any => {
+export const catlasChain: Chain = ((): Chain => {
   const id = process.env.NEXT_PUBLIC_CHAIN_NAME || 'anvil';
   if (id === 'riseTestnet') return riseTestnet;
   if (id === 'anvil') return anvil;
