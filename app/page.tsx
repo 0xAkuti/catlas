@@ -1,7 +1,24 @@
 import Link from "next/link";
 import { Globe } from "@/components/magicui/Globe";
+import { Card } from "@/components/ui/card";
+import { getPublicClient } from "@/lib/web3/client";
 
-export default function Home() {
+async function getCharityBalance(): Promise<string | null> {
+  try {
+    const addr = process.env.NEXT_PUBLIC_CHARITY_ADDRESS as `0x${string}` | undefined;
+    if (!addr) return null;
+    const client = getPublicClient();
+    const wei = await client.getBalance({ address: addr });
+    const whole = Number(wei / 1000000000000000000n);
+    const frac = Number(wei % 1000000000000000000n) / 1e18;
+    return (whole + frac).toFixed(3) + " ETH";
+  } catch {
+    return null;
+  }
+}
+
+export default async function Home() {
+  const donation = await getCharityBalance();
   return (
     <section className="relative py-12 sm:py-16 lg:py-20">
       <div className="mx-auto max-w-3xl text-center">
@@ -24,6 +41,13 @@ export default function Home() {
             Discover
           </Link>
         </div>
+        {donation !== null && (
+          <div className="mt-6 flex items-center justify-center">
+            <Card className="px-4 py-2 text-sm">
+              Total donations to charity: <span className="font-semibold">{donation}</span>
+            </Card>
+          </div>
+        )}
       </div>
       <div className="mx-auto mt-12 max-w-5xl">
         <Globe />
