@@ -4,6 +4,8 @@ import Link from "next/link";
 import { ipfsToHttp } from "@/lib/ipfs/gateway";
 import { useEffect, useState } from "react";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
+import { Button } from "@/components/ui/button";
+import { Heart } from "lucide-react";
 
 type Item = { tokenId: number; name?: string; image?: string; city?: string; country?: string };
 
@@ -55,15 +57,21 @@ export default function DiscoverCard({ item }: { item: Item }) {
           // eslint-disable-next-line @next/next/no-img-element
           <img src={ipfsToHttp(item.image)} alt={item.name || "Cat"} className="w-full h-full object-cover" />
         )}
-        <button
-          onClick={onToggleLike}
-          className={`absolute bottom-2 right-2 inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs shadow ${
-            liked ? "bg-white text-red-600" : "bg-white/90 text-gray-700"
-          }`}
-        >
-          <span>❤</span>
-          <span>{likes}</span>
-        </button>
+        <div className="absolute bottom-3 right-3 flex gap-2">
+          <Button
+            onClick={onToggleLike}
+            variant={liked ? "default" : "secondary"}
+            size="sm"
+            className={`shadow-lg backdrop-blur-sm ${
+              liked
+                ? "bg-white/90 hover:bg-white text-gray-900"
+                : "bg-white/90 hover:bg-white text-gray-700 hover:text-gray-900"
+            }`}
+          >
+            <Heart className={`w-4 h-4 mr-1 ${liked ? "fill-current text-red-500" : "text-gray-600"}`} />
+            {likes}
+          </Button>
+        </div>
       </div>
       <div className="text-sm font-medium truncate">{item.name || `Cat #${item.tokenId}`}</div>
       {(item.city || item.country) && (
