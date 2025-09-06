@@ -7,29 +7,28 @@ import {WorldCat1155} from "../src/WorldCat1155.sol";
 
 /// forge script script/DeployWorldCat1155.s.sol:DeployWorldCat1155 \
 ///   --rpc-url $RPC_URL --broadcast --verify --verifier blockscout \
-///   --private-key $PRIVATE_KEY \
+///   --account <ACCOUNT_ALIAS_OR_ADDRESS> \
 ///   -vvvv
 ///
 /// Required env vars:
-/// - PRIVATE_KEY: hex private key for deployer (used for broadcasting)
 /// - CHARITY: address to receive split
 /// Optional:
-/// - OWNER: owner address (defaults to deployer)
+/// - OWNER: owner address (defaults to broadcaster when omitted)
 contract DeployWorldCat1155 is Script {
     function run() external returns (WorldCat1155 deployed) {
-        uint256 deployerKey = vm.envUint("PRIVATE_KEY");
         address charity = vm.envAddress("CHARITY");
-        address owner = vm.envOr("OWNER", address(0));
+        address owner = 0x12d39C23E8323e19FA04bFf5108F059946Ede36e;
 
-        address deployer = vm.addr(deployerKey);
-        if (owner == address(0)) owner = deployer;
+        // Use the broadcaster provided via CLI flags (e.g., --account, --private-key, --mnemonic)
+        vm.startBroadcast();
 
-        console2.log("Deployer:", deployer);
+        console2.log("Broadcaster:", tx.origin);
         console2.log("Owner:", owner);
         console2.log("Charity:", charity);
 
-        vm.startBroadcast(deployerKey);
         deployed = new WorldCat1155(owner, charity);
+        deployed.setMintPrice(0.00001 ether);
+
         vm.stopBroadcast();
 
         console2.log("WorldCat1155 deployed at:", address(deployed));
