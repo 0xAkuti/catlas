@@ -1,5 +1,5 @@
 "use client";
-import { motion } from "motion/react";
+import { Easing, motion } from "motion/react";
 import React from "react";
 
 export const LoaderOne = () => {
@@ -9,7 +9,7 @@ export const LoaderOne = () => {
       repeat: Infinity,
       repeatType: "loop" as const,
       delay: x * 0.2,
-      ease: "easeInOut",
+      ease: "easeInOut" as Easing,
     };
   };
   return (
@@ -55,7 +55,7 @@ export const LoaderTwo = () => {
       repeat: Infinity,
       repeatType: "loop" as const,
       delay: x * 0.2,
-      ease: "easeInOut",
+      ease: [0.42, 0, 0.58, 1] as [number, number, number, number],
     };
   };
   return (
@@ -114,7 +114,7 @@ export const LoaderThree = () => {
         animate={{ pathLength: 1, fill: "var(--fill-final)" }}
         transition={{
           duration: 10,
-          ease: "easeInOut",
+          ease: [0.42, 0, 0.58, 1] as [number, number, number, number],
           repeat: Infinity,
           repeatType: "reverse",
         }}        
@@ -128,8 +128,9 @@ export const LoaderFour = ({ text = "Loading..." }: { text?: string }) => {
   return (
     <div className="relative font-bold text-black [perspective:1000px] dark:text-white">
       <motion.span
+        style={{ display: "inline-block" }}
         animate={{
-          skew: [0, -40, 0],
+          rotateZ: [0, -5, 0],
           scaleX: [1, 2, 1],
         }}
         transition={{
@@ -155,7 +156,7 @@ export const LoaderFour = ({ text = "Loading..." }: { text?: string }) => {
           duration: 0.5,
           repeat: Infinity,
           repeatType: "reverse",
-          ease: "linear",
+          ease: [0, 0, 1, 1] as [number, number, number, number],
           times: [0, 0.2, 0.5, 0.8, 1],
         }}
       >

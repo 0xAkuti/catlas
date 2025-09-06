@@ -8,7 +8,7 @@ import UploadStepper from "@/components/comp-523";
 import ImageUploader from "@/components/comp-544";
 import exifr from "exifr";
 import { compressToJpegSquare } from "@/lib/image/process";
-import { Progress } from "@/components/ui/progress";
+// import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
 import { worldCat1155Abi } from "@/lib/web3/abi/Catlas1155";
 import { getPublicClient } from "@/lib/web3/client";
@@ -23,7 +23,7 @@ import { Rocket } from "lucide-react";
 type UploadStep = "select" | "crop" | "analyzing" | "result";
 
 export default function UploadPage() {
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  // const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [step, setStep] = useState<UploadStep>("select");
@@ -41,7 +41,7 @@ export default function UploadPage() {
   };
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
   const [gps, setGps] = useState<{ lat: number; lng: number } | null>(null);
-  const [progress, setProgress] = useState<number>(0); // reserved for UX updates
+  const [progress, setProgress] = useState<number>(0); // reserved
   const [location, setLocation] = useState<{ city?: string; country?: string } | null>(null);
   const [title, setTitle] = useState<string>("");
   const { authenticated } = usePrivy();

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { openrouter, getOpenRouterModel } from "@/lib/openrouter/client";
 import { CAT_CLASSIFICATION_PROMPT, type CatAnalysis } from "@/lib/openrouter/prompt";
+import type { ChatCompletionCreateParams } from "openai/resources/chat/completions";
 
 type AnalyzeRequest = {
   imageBase64: string; // data URL or raw base64 (no header)
@@ -24,24 +25,22 @@ export async function POST(req: NextRequest) {
     const model = getOpenRouterModel();
 
     // Use multimodal message content so the model actually receives the image
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const multimodalMessages = [
+      { role: "system", content: "You are a precise vision assistant." },
+      {
+        role: "user" as const,
+        content: [
+          { type: "text" as const, text: CAT_CLASSIFICATION_PROMPT },
+          { type: "image_url" as const, image_url: imageDataUrl },
+        ],
+      },
+    ] as unknown as ChatCompletionCreateParams["messages"];
+
     const completion = await openrouter.chat.completions.create({
       model,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      messages: [
-        { role: "system", content: "You are a precise vision assistant." } as any,
-        {
-          role: "user",
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          content: [
-            { type: "text", text: CAT_CLASSIFICATION_PROMPT },
-            { type: "image_url", image_url: imageDataUrl },
-          ] as any,
-        } as any,
-      ],
+      messages: multimodalMessages,
       temperature: 0.2,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      response_format: { type: "json_object" } as any,
+      response_format: { type: "json_object" } as unknown as ChatCompletionCreateParams["response_format"],
     });
 
     const content = completion.choices?.[0]?.message?.content || "{}";
