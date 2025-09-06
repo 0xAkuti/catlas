@@ -77,6 +77,8 @@ contract WorldCat1155Test is Test {
 
         // Buyer received 1 token
         assertEq(wc.balanceOf(BUYER, id), 1);
+        // Total supply updated
+        assertEq(wc.totalSupply(id), 2); // 1 to creator on publish + 1 to buyer
 
         // Splits: equal thirds; charity receives remainder if any
         uint256 share = price / 3;

@@ -28,6 +28,9 @@ contract WorldCat1155 is ERC1155, Ownable {
     /// @dev Mapping tokenId => creator address.
     mapping(uint256 => address) public creatorOf;
 
+    /// @dev Mapping tokenId => total minted supply (no burns supported in this contract).
+    mapping(uint256 => uint256) internal _totalSupply;
+
     event CatPublished(uint256 indexed tokenId, address indexed creator, string cid);
     event MintPriceUpdated(uint256 oldPrice, uint256 newPrice);
 
@@ -46,6 +49,9 @@ contract WorldCat1155 is ERC1155, Ownable {
         _tokenCid[tokenId] = cid;
         creatorOf[tokenId] = msg.sender;
         _mint(msg.sender, tokenId, 1, "");
+        unchecked {
+            _totalSupply[tokenId] += 1;
+        }
         emit CatPublished(tokenId, msg.sender, cid);
     }
 
@@ -57,6 +63,9 @@ contract WorldCat1155 is ERC1155, Ownable {
         require(msg.value == cost, "INCORRECT_PRICE");
 
         _mint(msg.sender, tokenId, amount, "");
+        unchecked {
+            _totalSupply[tokenId] += amount;
+        }
 
         // Equal split between contract owner, creator, and charity (using SafeTransferLib).
         uint256 share = msg.value / 3;
@@ -77,6 +86,11 @@ contract WorldCat1155 is ERC1155, Ownable {
         require(bytes(cid).length != 0, "UNKNOWN_TOKEN");
         // Standard IPFS gateway-neutral URI: ipfs://CID
         return string.concat("ipfs://", cid);
+    }
+
+    /// @notice Returns the total minted supply for a token id.
+    function totalSupply(uint256 id) external view returns (uint256) {
+        return _totalSupply[id];
     }
 }
 
