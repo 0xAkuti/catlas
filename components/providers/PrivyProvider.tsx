@@ -14,6 +14,7 @@ export default function Providers({
       appId={appId || ""}
       config={{
         defaultChain: catlasChain,
+        supportedChains: [catlasChain],
         // Enable embedded wallets for users without wallets on login
         embeddedWallets: {
           ethereum: { createOnLogin: "users-without-wallets" },

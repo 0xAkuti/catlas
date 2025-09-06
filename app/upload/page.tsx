@@ -18,6 +18,7 @@ import { catlasChain } from "@/lib/web3/client";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { LoaderThree } from "@/components/ui/loader";
+import { Rocket } from "lucide-react";
 
 type UploadStep = "select" | "crop" | "analyzing" | "result";
 
@@ -243,9 +244,11 @@ export default function UploadPage() {
                 location={location || undefined}
               />
             </div>
-            <div className="flex gap-3">
-              <Button onClick={() => setStep("select")}>Back</Button>
+            <div className="flex justify-center gap-3">
+              <Button variant="secondary" onClick={() => setStep("select")}>Back</Button>
               <Button
+                size="lg"
+                className="h-11 px-6 shadow-lg hover:shadow-xl"
                 onClick={async () => {
                   if (!selectedFile || !analysis?.isCat) return;
                   // Build metadata JSON
@@ -344,22 +347,10 @@ export default function UploadPage() {
                   }
                 }}
               >
+                <Rocket className="mr-2 h-4 w-4" />
                 Publish
               </Button>
-              <Button
-                variant="secondary"
-                onClick={() => {
-                  analyzeIdRef.current++;
-                  setSelectedFile(null);
-                  if (previewUrl) URL.revokeObjectURL(previewUrl);
-                  setPreviewUrl(null);
-                  setAnalysis(null);
-                  setTitle("");
-                  setStep("select");
-                }}
-              >
-                Analyze another
-              </Button>
+              
             </div>
           </div>
         )}
