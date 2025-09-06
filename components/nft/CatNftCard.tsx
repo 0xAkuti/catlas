@@ -12,6 +12,7 @@ import {
   Palette,
   Shield,
   Share2,
+  Layers,
 } from "lucide-react";
 
 type Classification = {
@@ -72,9 +73,15 @@ export function CatNftCard({
 
           <div className="absolute bottom-3 right-3 flex gap-2">
             {typeof supplyCount === "number" && (
-              <div className="rounded-md px-2 py-1 text-xs shadow bg-white/90 text-gray-700">
-                Minted {supplyCount}
-              </div>
+              <Button
+                variant="secondary"
+                size="sm"
+                className="shadow-lg bg-white/90 hover:bg-white text-gray-700"
+                disabled
+              >
+                <Layers className="w-4 h-4 mr-1 text-gray-600" />
+                {supplyCount}
+              </Button>
             )}
             {onLike && (
               <Button
