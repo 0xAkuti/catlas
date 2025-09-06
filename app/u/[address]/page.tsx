@@ -10,7 +10,7 @@ async function fetchCats(qs: string): Promise<Item[]> {
 }
 
 export default async function UserPage({ params }: { params: { address: string } }) {
-  const address = params.address;
+  const { address } = await params;
   const discovered = await fetchCats(`creator=${address}`);
   const collected = await fetchCats(`owner=${address}`);
 
