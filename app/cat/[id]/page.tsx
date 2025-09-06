@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { worldCat1155Abi } from "@/lib/web3/abi/WorldCat1155";
 import { getPublicClient } from "@/lib/web3/client";
 import { ipfsToHttp } from "@/lib/ipfs/gateway";
-import { CatNftCard } from "@/components/nft/CatNftCard";
+import CatNftWithLikes from "@/components/nft/CatNftWithLikes";
 import MintDialog from "@/components/nft/MintDialog";
 
 type Props = { params: { id: string } };
@@ -48,7 +48,7 @@ export default async function CatPage({ params }: Props) {
   return (
     <section className="py-8">
       <div className="mx-auto w-full max-w-md">
-        <CatNftCard classification={classification} imageUrl={imageUrl} location={location} />
+        <CatNftWithLikes tokenId={idNum} classification={classification} imageUrl={imageUrl} location={location} />
       </div>
       <div className="mt-4">
         <MintDialog tokenId={idNum} />
