@@ -20,6 +20,19 @@ export const metadata: Metadata = {
   title: "WorldCat",
   description:
     "Share cats found around the world. Discover, upload, and mint unique cat NFTs.",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),
+  openGraph: {
+    title: "WorldCat",
+    description: "Share cats found around the world. Discover, upload, and mint unique cat NFTs.",
+    url: "/",
+    siteName: "WorldCat",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "WorldCat",
+    description: "Share cats found around the world. Discover, upload, and mint unique cat NFTs.",
+  },
 };
 
 export default function RootLayout({
