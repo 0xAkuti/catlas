@@ -9,6 +9,8 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const creator = searchParams.get("creator");
     const owner = searchParams.get("owner");
+    const q = (searchParams.get("q") || "").trim();
+    const sort = (searchParams.get("sort") || "newest").toLowerCase();
 
     // If owner is requested (collected view), use Supabase list and filter via balanceOf per token (no log scanning).
     if (owner) {
@@ -54,13 +56,37 @@ export async function GET(req: NextRequest) {
 
     // Otherwise use Supabase index for discover/search
     const db = getSupabaseClient();
-    let query = db.from("cats").select("token_id,name,city,country,latitude,longitude,metadata,cid,creator,created_at").order("created_at", { ascending: false }).limit(60);
+    let query = db
+      .from("cats")
+      .select("token_id,name,city,country,latitude,longitude,metadata,cid,creator,created_at")
+      .limit(60);
     if (creator) {
       query = query.eq("creator", creator.toLowerCase());
     }
+    if (q) {
+      const like = `%${q}%`;
+      // Search common fields and a few metadata keys
+      query = query.or(
+        [
+          `name.ilike.${like}`,
+          `city.ilike.${like}`,
+          `country.ilike.${like}`,
+          `metadata->>description.ilike.${like}`,
+          `metadata->>breed.ilike.${like}`,
+          `metadata->>color.ilike.${like}`,
+          `metadata->>pattern.ilike.${like}`,
+        ].join(",")
+      );
+    }
+    if (sort === "oldest") {
+      query = query.order("created_at", { ascending: true });
+    } else {
+      // newest or default
+      query = query.order("created_at", { ascending: false });
+    }
     const { data, error } = await query;
     if (error) throw error;
-    const items = (data || []).map((row: any) => ({
+    let items = (data || []).map((row: any) => ({
       tokenId: row.token_id,
       name: row.name,
       image: row.metadata?.image || undefined,
@@ -69,6 +95,20 @@ export async function GET(req: NextRequest) {
       latitude: row.latitude ?? undefined,
       longitude: row.longitude ?? undefined,
     }));
+    if (sort === "most_liked" && items.length) {
+      // Compute likes counts per token and sort desc
+      const counts = await Promise.all(
+        items.map(async (it) => {
+          const { count } = await db
+            .from("likes")
+            .select("id", { count: "exact", head: true })
+            .eq("token_id", it.tokenId);
+          return [it.tokenId, count || 0] as [number, number];
+        })
+      );
+      const map = new Map<number, number>(counts);
+      items.sort((a, b) => (map.get(b.tokenId) || 0) - (map.get(a.tokenId) || 0));
+    }
     return NextResponse.json({ items });
   } catch (e) {
     return NextResponse.json({ items: [], error: "failed" }, { status: 500 });

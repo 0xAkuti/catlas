@@ -3,6 +3,9 @@
 import { useEffect, useState } from "react";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
 import { CatNftCard } from "@/components/nft/CatNftCard";
+import MintDialog from "@/components/nft/MintDialog";
+import { Button } from "@/components/ui/button";
+import { Share2 } from "lucide-react";
 
 type Classification = {
   isCat: boolean;
@@ -74,6 +77,23 @@ export default function CatNftWithLikes({
       likesCount={likes}
       isLiked={liked}
       onLike={onLike}
+      actions={
+        <>
+          <MintDialog tokenId={tokenId} />
+          <Button
+            variant="secondary"
+            onClick={async () => {
+              const url = `${process.env.NEXT_PUBLIC_APP_URL || ""}/cat/${tokenId}`;
+              if (navigator.share) {
+                try { await navigator.share({ url }); return; } catch {}
+              }
+              try { await navigator.clipboard.writeText(url); } catch {}
+            }}
+          >
+            <Share2 className="w-4 h-4 mr-1" /> Share
+          </Button>
+        </>
+      }
     />
   );
 }
