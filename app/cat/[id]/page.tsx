@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { worldCat1155Abi } from "@/lib/web3/abi/WorldCat1155";
 import { getPublicClient } from "@/lib/web3/client";
@@ -53,6 +54,46 @@ export default async function CatPage({ params }: Props) {
       
     </section>
   );
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id } = await params;
+  const idNum = Number(id);
+  if (!Number.isFinite(idNum)) return {};
+  try {
+    const client = getPublicClient();
+    const uri = (await client.readContract({
+      address: process.env.NEXT_PUBLIC_WORLDCAT1155_ADDRESS as `0x${string}`,
+      abi: worldCat1155Abi,
+      functionName: "uri",
+      args: [BigInt(idNum)],
+    })) as string;
+    const res = await fetch(ipfsToHttp(uri), { cache: "no-store" });
+    if (!res.ok) return {};
+    const meta = await res.json();
+    const imageUrl = meta.image ? ipfsToHttp(meta.image) : undefined;
+    const title = meta.name ? `${meta.name} — WorldCat` : `Cat #${idNum} — WorldCat`;
+    const description = meta.description || "Discovered on WorldCat";
+    return {
+      title,
+      description,
+      openGraph: {
+        title,
+        description,
+        images: imageUrl ? [{ url: imageUrl }] : undefined,
+        url: `/cat/${idNum}`,
+        type: "article",
+      },
+      twitter: {
+        card: "summary_large_image",
+        title,
+        description,
+        images: imageUrl ? [imageUrl] : undefined,
+      },
+    } satisfies Metadata;
+  } catch {
+    return {};
+  }
 }
 
 
