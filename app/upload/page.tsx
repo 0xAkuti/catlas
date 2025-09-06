@@ -14,6 +14,7 @@ import { usePrivy, useWallets } from "@privy-io/react-auth";
 import { createWalletClient, custom, decodeEventLog } from "viem";
 import { worldcatChain } from "@/lib/web3/client";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 type UploadStep = "select" | "crop" | "analyzing" | "result";
 
@@ -275,6 +276,17 @@ export default function UploadPage() {
                         }),
                       });
                     } catch {}
+                    const explorerBase = worldcatChain?.blockExplorers?.default?.url;
+                    const txUrl = explorerBase ? `${explorerBase}/tx/${hash}` : undefined;
+                    toast.success("Cat published!", {
+                      description: `Token #${newId} was created successfully`,
+                      action: txUrl ? {
+                        label: "View Tx",
+                        onClick: () => {
+                          window.open(txUrl, "_blank");
+                        }
+                      } : undefined,
+                    });
                     router.push(`/cat/${newId}`);
                   }
                 }}

@@ -9,6 +9,7 @@ import { getPublicClient } from "@/lib/web3/client";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
 import { createWalletClient, custom } from "viem";
 import { worldcatChain } from "@/lib/web3/client";
+import { toast } from "sonner";
 
 export default function MintDialog({ tokenId }: { tokenId: number }) {
   const [open, setOpen] = useState(false);
@@ -64,7 +65,7 @@ export default function MintDialog({ tokenId }: { tokenId: number }) {
               const provider = await wallets[0].getEthereumProvider?.();
               if (!provider) return;
               const walletClient = createWalletClient({ chain: worldcatChain, transport: custom(provider) });
-              await walletClient.writeContract({
+              const hash = await walletClient.writeContract({
                 chain: worldcatChain,
                 account: wallets[0].address as `0x${string}`,
                 address: process.env.NEXT_PUBLIC_WORLDCAT1155_ADDRESS as `0x${string}`,
@@ -72,6 +73,17 @@ export default function MintDialog({ tokenId }: { tokenId: number }) {
                 functionName: "mint",
                 args: [BigInt(tokenId), BigInt(amount)],
                 value: total,
+              });
+              const explorerBase = worldcatChain?.blockExplorers?.default?.url;
+              const txUrl = explorerBase ? `${explorerBase}/tx/${hash}` : undefined;
+              toast.success("Mint successful!", {
+                description: `You minted ${amount} token${amount > 1 ? "s" : ""}`,
+                action: txUrl ? {
+                  label: "View Tx",
+                  onClick: () => {
+                    window.open(txUrl, "_blank");
+                  }
+                } : undefined,
               });
               setOpen(false);
             }}
