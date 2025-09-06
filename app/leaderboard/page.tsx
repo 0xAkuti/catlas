@@ -17,7 +17,6 @@ export default async function LeaderboardPage() {
       <h2 className="text-xl font-semibold">Most liked cats</h2>
       <div className="mt-6 flex flex-col gap-3">
         {items.map((it) => (
-          // @ts-expect-error Server/Client boundary
           <CatListItem key={it.tokenId} item={it} />
         ))}
         {!items.length && <div className="text-sm text-muted-foreground">No cats yet.</div>}

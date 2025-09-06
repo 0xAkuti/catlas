@@ -28,7 +28,6 @@ export default async function DiscoverPage({ searchParams }: { searchParams: Pro
         </div>
         <div className="flex flex-col gap-3">
           {items.map((it) => (
-            // @ts-expect-error Server/Client boundary
             <CatListItem key={it.tokenId} item={it} />
           ))}
           {!items.length && <div className="text-sm text-muted-foreground">No cats yet.</div>}
