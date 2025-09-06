@@ -1,5 +1,4 @@
-import Link from "next/link";
-import { ipfsToHttp } from "@/lib/ipfs/gateway";
+import { CatListItem } from "@/components/cats/CatListItem";
 
 type Item = { tokenId: number; name?: string; image?: string; city?: string; country?: string };
 
@@ -23,18 +22,8 @@ export default async function UserPage({ params }: { params: { address: string }
           <h3 className="text-base font-semibold mb-3">Discovered</h3>
           <div className="grid gap-3">
             {discovered.map((it) => (
-              <Link key={it.tokenId} href={`/cat/${it.tokenId}`} className="rounded-lg border p-3 hover:bg-muted/40 transition">
-                <div className="relative aspect-square w-full overflow-hidden rounded mb-3 bg-muted">
-                  {it.image && (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={ipfsToHttp(it.image)} alt={it.name || "Cat"} className="w-full h-full object-cover" />
-                  )}
-                </div>
-                <div className="text-sm font-medium truncate">{it.name || `Cat #${it.tokenId}`}</div>
-                {(it.city || it.country) && (
-                  <div className="text-xs text-muted-foreground truncate">{[it.city, it.country].filter(Boolean).join(", ")}</div>
-                )}
-              </Link>
+              // @ts-expect-error Server/Client boundary
+              <CatListItem key={it.tokenId} item={it} />
             ))}
             {!discovered.length && <div className="text-sm text-muted-foreground">No discovered cats.</div>}
           </div>
@@ -43,18 +32,8 @@ export default async function UserPage({ params }: { params: { address: string }
           <h3 className="text-base font-semibold mb-3">Collected</h3>
           <div className="grid gap-3">
             {collected.map((it) => (
-              <Link key={it.tokenId} href={`/cat/${it.tokenId}`} className="rounded-lg border p-3 hover:bg-muted/40 transition">
-                <div className="relative aspect-square w-full overflow-hidden rounded mb-3 bg-muted">
-                  {it.image && (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={ipfsToHttp(it.image)} alt={it.name || "Cat"} className="w-full h-full object-cover" />
-                  )}
-                </div>
-                <div className="text-sm font-medium truncate">{it.name || `Cat #${it.tokenId}`}</div>
-                {(it.city || it.country) && (
-                  <div className="text-xs text-muted-foreground truncate">{[it.city, it.country].filter(Boolean).join(", ")}</div>
-                )}
-              </Link>
+              // @ts-expect-error Server/Client boundary
+              <CatListItem key={it.tokenId} item={it} />
             ))}
             {!collected.length && <div className="text-sm text-muted-foreground">No collected cats.</div>}
           </div>
