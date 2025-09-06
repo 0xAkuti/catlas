@@ -251,7 +251,27 @@ export default function UploadPage() {
                       }
                     } catch {}
                   }
-                  if (newId !== null) router.push(`/cat/${newId}`);
+                  if (newId !== null) {
+                    // Upsert into Supabase index
+                    try {
+                      await fetch("/api/cats/index", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                          tokenId: newId,
+                          creator: account,
+                          name: metadata.name,
+                          city: metadata.location_city,
+                          country: metadata.location_country,
+                          latitude: metadata.latitude,
+                          longitude: metadata.longitude,
+                          cid: data.cid,
+                          metadata,
+                        }),
+                      });
+                    } catch {}
+                    router.push(`/cat/${newId}`);
+                  }
                 }}
               >
                 Publish
