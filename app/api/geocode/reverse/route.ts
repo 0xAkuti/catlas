@@ -15,6 +15,7 @@ export async function GET(req: NextRequest) {
   url.searchParams.set("lon", lon);
   url.searchParams.set("zoom", "10");
   url.searchParams.set("addressdetails", "1");
+  url.searchParams.set("accept-language", "en");
   if (email) url.searchParams.set("email", email);
 
   try {
@@ -22,6 +23,7 @@ export async function GET(req: NextRequest) {
       headers: {
         "User-Agent": `WorldCat/1.0 (${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"})`,
         Referer: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+        "Accept-Language": "en",
       },
       // Nominatim discourages heavy usage; keep default caching minimal
       cache: "no-store",

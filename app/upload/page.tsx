@@ -196,6 +196,11 @@ export default function UploadPage() {
                   const metadata = {
                     name: title || analysis.title || "Untitled Cat",
                     description: analysis.sceneDescription || "",
+                    // Custom fields for frontend consumption
+                    location_city: location?.city || undefined,
+                    location_country: location?.country || undefined,
+                    latitude: gps?.lat || undefined,
+                    longitude: gps?.lng || undefined,
                     attributes: [
                       { trait_type: "Breed", value: analysis.breed || "Unknown" },
                       { trait_type: "Color", value: analysis.color || "Unknown" },
