@@ -18,7 +18,8 @@ async function fetchEnsName(address: string): Promise<string | null> {
 }
 
 export async function GET(_req: NextRequest, { params }: { params: { address: string } }) {
-  const address = params.address?.toLowerCase();
+  const { address: addr } = await params as unknown as { address: string };
+  const address = addr?.toLowerCase();
   if (!address) return NextResponse.json({ error: "missing address" }, { status: 400 });
   const db = getSupabaseClient();
 
@@ -109,7 +110,8 @@ export async function GET(_req: NextRequest, { params }: { params: { address: st
 
 export async function POST(req: NextRequest, { params }: { params: { address: string } }) {
   try {
-    const address = params.address?.toLowerCase();
+    const { address: addr } = await params as unknown as { address: string };
+    const address = addr?.toLowerCase();
     const { username } = await req.json();
     const caller = req.headers.get("x-user-address")?.toLowerCase();
     if (!address || !caller || caller !== address) {
