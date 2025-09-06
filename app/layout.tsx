@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { Ubuntu, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/providers/PrivyProvider";
@@ -22,6 +23,9 @@ export const metadata: Metadata = {
   description:
     "Share cats found around the world. Discover, upload, and mint unique cat NFTs.",
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),
+  icons: {
+    icon: '/favicon.png',
+  },
   openGraph: {
     title: "Catlas",
     description: "Share cats found around the world. Discover, upload, and mint unique cat NFTs.",
@@ -48,7 +52,14 @@ export default function RootLayout({
           <AppToaster />
           <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
           <div className="mx-auto max-w-screen-md md:max-w-screen-lg lg:max-w-screen-xl px-4 py-3 flex items-center justify-between">
-            <Link href="/" className="font-semibold text-lg tracking-tight">
+            <Link href="/" className="font-semibold text-lg tracking-tight flex items-center gap-2">
+              <Image
+                src="/logo.png"
+                alt="Catlas Logo"
+                width={32}
+                height={32}
+                className="h-8 w-8"
+              />
               Catlas
             </Link>
             <nav className="flex items-center gap-4 text-sm">
