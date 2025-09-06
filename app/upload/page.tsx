@@ -11,8 +11,9 @@ import { Input } from "@/components/ui/input";
 import { worldCat1155Abi } from "@/lib/web3/abi/WorldCat1155";
 import { getPublicClient } from "@/lib/web3/client";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
-import { createWalletClient, custom } from "viem";
+import { createWalletClient, custom, decodeEventLog } from "viem";
 import { base, anvil } from "viem/chains";
+import { useRouter } from "next/navigation";
 
 type UploadStep = "select" | "crop" | "analyzing" | "result";
 
@@ -28,6 +29,7 @@ export default function UploadPage() {
   const [title, setTitle] = useState<string>("");
   const { authenticated } = usePrivy();
   const { wallets } = useWallets();
+  const router = useRouter();
 
   return (
     <section className="py-8">
@@ -230,13 +232,26 @@ export default function UploadPage() {
                   const contractAddress = process.env.NEXT_PUBLIC_WORLDCAT1155_ADDRESS as `0x${string}`;
                   if (!contractAddress) return;
                   const account = wallets[0].address as `0x${string}`;
-                  await walletClient.writeContract({
+                  const hash = await walletClient.writeContract({
                     account,
                     address: contractAddress,
                     abi: worldCat1155Abi,
                     functionName: "publishCat",
                     args: [data.cid],
                   });
+                  const publicClient = getPublicClient();
+                  const receipt = await publicClient.waitForTransactionReceipt({ hash });
+                  let newId: number | null = null;
+                  for (const lg of receipt.logs) {
+                    try {
+                      const ev = decodeEventLog({ abi: worldCat1155Abi as any, data: lg.data, topics: lg.topics }) as any;
+                      if (ev.eventName === "CatPublished") {
+                        newId = Number(ev.args.tokenId as bigint);
+                        break;
+                      }
+                    } catch {}
+                  }
+                  if (newId !== null) router.push(`/cat/${newId}`);
                 }}
               >
                 Publish
