@@ -254,19 +254,21 @@ export default function UploadPage() {
                   if (newId !== null) {
                     // Upsert into Supabase index
                     try {
+                      const metaForIndex = { ...metadata } as any;
+                      if (data.imageCid) metaForIndex.image = `ipfs://${data.imageCid}`;
                       await fetch("/api/cats/index", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({
                           tokenId: newId,
                           creator: account,
-                          name: metadata.name,
-                          city: metadata.location_city,
-                          country: metadata.location_country,
-                          latitude: metadata.latitude,
-                          longitude: metadata.longitude,
+                          name: metaForIndex.name,
+                          city: metaForIndex.location_city,
+                          country: metaForIndex.location_country,
+                          latitude: metaForIndex.latitude,
+                          longitude: metaForIndex.longitude,
                           cid: data.cid,
-                          metadata,
+                          metadata: metaForIndex,
                         }),
                       });
                     } catch {}
