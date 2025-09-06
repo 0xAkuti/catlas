@@ -24,8 +24,6 @@ export default async function DiscoverPage({ searchParams }: { searchParams: Pro
       <Controls q={q} sort={sort} />
       <div className="mt-6 grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2 relative z-10">
-          {/* Map Client Component */}
-          {/* @ts-expect-error Server/Client boundary */}
           <DiscoverMap items={items} />
         </div>
         <div className="flex flex-col gap-3">

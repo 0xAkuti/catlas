@@ -23,9 +23,21 @@ export default function UploadPage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [step, setStep] = useState<UploadStep>("select");
-  const [analysis, setAnalysis] = useState<Record<string, any> | null>(null);
+  type Analysis = {
+    isCat: boolean;
+    title?: string;
+    breed?: string;
+    color?: string;
+    pattern?: string;
+    bodyType?: string;
+    eyeColor?: string;
+    pose?: string;
+    sceneDescription?: string;
+    [key: string]: unknown;
+  };
+  const [analysis, setAnalysis] = useState<Analysis | null>(null);
   const [gps, setGps] = useState<{ lat: number; lng: number } | null>(null);
-  const [progress, setProgress] = useState<number>(0);
+  const [progress, setProgress] = useState<number>(0); // reserved for UX updates
   const [location, setLocation] = useState<{ city?: string; country?: string } | null>(null);
   const [title, setTitle] = useState<string>("");
   const { authenticated } = usePrivy();
@@ -188,13 +200,13 @@ export default function UploadPage() {
                 classification={{
                   isCat: analysis?.isCat === true,
                   title,
-                  breed: (analysis as any)?.breed,
-                  color: (analysis as any)?.color,
-                  pattern: (analysis as any)?.pattern,
-                  bodyType: (analysis as any)?.bodyType,
-                  eyeColor: (analysis as any)?.eyeColor,
-                  pose: (analysis as any)?.pose,
-                  sceneDescription: (analysis as any)?.sceneDescription,
+                  breed: analysis?.breed,
+                  color: analysis?.color,
+                  pattern: analysis?.pattern,
+                  bodyType: analysis?.bodyType,
+                  eyeColor: analysis?.eyeColor,
+                  pose: analysis?.pose,
+                  sceneDescription: analysis?.sceneDescription,
                 }}
                 imageUrl={previewUrl}
                 location={location || undefined}
@@ -255,7 +267,7 @@ export default function UploadPage() {
                   let newId: number | null = null;
                   for (const lg of receipt.logs) {
                     try {
-                      const ev = decodeEventLog({ abi: worldCat1155Abi as any, data: lg.data, topics: lg.topics }) as any;
+                      const ev = decodeEventLog({ abi: worldCat1155Abi, data: lg.data, topics: lg.topics }) as { eventName: string; args: { tokenId: bigint } };
                       if (ev.eventName === "CatPublished") {
                         newId = Number(ev.args.tokenId as bigint);
                         break;
@@ -266,10 +278,10 @@ export default function UploadPage() {
                     // Upsert into Supabase index
                     try {
                       // Use same metadata we used for IPFS, but ensure image is set from imageCid for the DB record
-                      const metadataForDb = {
+                      const metadataForDb: Record<string, unknown> = {
                         ...metadata,
-                        image: data?.imageCid ? `ipfs://${data.imageCid}` : (metadata as any).image,
-                      } as any;
+                        image: data?.imageCid ? `ipfs://${data.imageCid}` : (metadata as Record<string, unknown>)?.image,
+                      };
                       await fetch("/api/cats/index", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },

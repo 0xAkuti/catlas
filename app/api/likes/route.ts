@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
       if (insErr) throw insErr;
       return NextResponse.json({ liked: true });
     }
-  } catch (e) {
+  } catch {
     return NextResponse.json({ error: "Failed" }, { status: 500 });
   }
 }
@@ -64,7 +64,7 @@ export async function GET(req: NextRequest) {
       liked = !!(data && data.length);
     }
     return NextResponse.json({ total: count || 0, liked });
-  } catch (e) {
+  } catch {
     return NextResponse.json({ total: 0, liked: false });
   }
 }

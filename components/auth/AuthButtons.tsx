@@ -5,7 +5,7 @@ import { usePrivy, useWallets } from "@privy-io/react-auth";
 import { Button } from "@/components/ui/button";
 
 export default function AuthButtons() {
-  const { ready, authenticated, user, logout, login } = usePrivy();
+  const { ready, authenticated, /* user, */ logout, login } = usePrivy();
   const { wallets } = useWallets();
 
   if (!ready) return null;

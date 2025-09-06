@@ -1,6 +1,5 @@
 import { CatListItem } from "@/components/cats/CatListItem";
 import { UserHeader } from "@/components/user/UserHeader";
-import { Card } from "@/components/ui/card";
 import { UserStats } from "@/components/user/UserStats";
 
 type Item = { tokenId: number; name?: string; image?: string; city?: string; country?: string };

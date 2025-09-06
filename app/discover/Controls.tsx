@@ -21,7 +21,7 @@ export default function DiscoverControls({ q, sort }: { q: string; sort: string 
       router.push(`${pathname}?${params.toString()}`);
     }, 300);
     return () => clearTimeout(t);
-  }, [query]);
+  }, [query, sel, pathname, router, searchParams]);
 
   const onSortChange = (value: string) => {
     setSel(value);

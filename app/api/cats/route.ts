@@ -31,7 +31,7 @@ export async function GET(req: NextRequest) {
           try {
             const bal = (await client.readContract({
               address,
-              abi: worldCat1155Abi as any,
+              abi: worldCat1155Abi,
               functionName: "balanceOf",
               args: [owner as `0x${string}`, BigInt(row.token_id)],
             })) as bigint;
@@ -86,7 +86,7 @@ export async function GET(req: NextRequest) {
     }
     const { data, error } = await query;
     if (error) throw error;
-    let items = (data || []).map((row: { token_id: number; name: string | null; city: string | null; country: string | null; latitude: number | null; longitude: number | null; metadata: { image?: string } | null; }) => ({
+    const items = (data || []).map((row: { token_id: number; name: string | null; city: string | null; country: string | null; latitude: number | null; longitude: number | null; metadata: { image?: string } | null; }) => ({
       tokenId: row.token_id,
       name: row.name,
       image: row.metadata?.image || undefined,
