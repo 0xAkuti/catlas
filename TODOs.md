@@ -1,0 +1,7 @@
+- currently no error when uploading a non cat picture
+- remove the duplicate button on last upload page, we have back and upload another
+- create better looking flow for upload page
+- improve userflow when publishing, wait for tx, show sucess, ...#
+- add visual feedback on share button
+- add visual feedback on mint button and when waiting for tx, show success message
+- use stepper https://originui.com/stepper for upload steps, also fileupload and cropper from originui
