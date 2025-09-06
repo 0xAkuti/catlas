@@ -6,7 +6,6 @@ import CatNftWithLikes from "@/components/nft/CatNftWithLikes";
 import MintDialog from "@/components/nft/MintDialog";
 import { Button } from "@/components/ui/button";
 import { Share2 } from "lucide-react";
-import MintDialog from "@/components/nft/MintDialog";
 
 type Props = { params: { id: string } };
 
@@ -73,9 +72,7 @@ export default async function CatPage({ params }: Props) {
           }
         />
       </div>
-      <div className="mt-4">
-        <MintDialog tokenId={idNum} />
-      </div>
+      
     </section>
   );
 }
