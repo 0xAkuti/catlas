@@ -18,10 +18,8 @@ export default async function UserPage({ params }: { params: { address: string }
 
   return (
     <section className="py-8">
-      {/* @ts-expect-error Server/Client boundary */}
       <UserHeader address={address} />
       <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        {/* @ts-expect-error Server/Client boundary */}
         <UserStats address={address} />
       </div>
       <div className="mt-6 grid gap-8 lg:grid-cols-2">
@@ -29,7 +27,6 @@ export default async function UserPage({ params }: { params: { address: string }
           <h3 className="text-base font-semibold mb-3">Discovered</h3>
           <div className="grid gap-3">
             {discovered.map((it) => (
-              // @ts-expect-error Server/Client boundary
               <CatListItem key={it.tokenId} item={it} />
             ))}
             {!discovered.length && <div className="text-sm text-muted-foreground">No discovered cats.</div>}
@@ -39,7 +36,6 @@ export default async function UserPage({ params }: { params: { address: string }
           <h3 className="text-base font-semibold mb-3">Collected</h3>
           <div className="grid gap-3">
             {collected.map((it) => (
-              // @ts-expect-error Server/Client boundary
               <CatListItem key={it.tokenId} item={it} />
             ))}
             {!collected.length && <div className="text-sm text-muted-foreground">No collected cats.</div>}
