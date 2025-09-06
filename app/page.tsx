@@ -4,12 +4,13 @@ import { Globe } from "@/components/magicui/Globe";
 import { Card } from "@/components/ui/card";
 import { getPublicClient } from "@/lib/web3/client";
 import { worldCat1155Abi } from "@/lib/web3/abi/Catlas1155";
+import { catlasChain } from "@/lib/web3/client";
 
-async function getCharityBalance(): Promise<string | null> {
+async function getCharityInfo(): Promise<{ address: `0x${string}` | null; balanceEth: string | null }> {
   try {
     const client = getPublicClient();
     const contract = process.env.NEXT_PUBLIC_WORLDCAT1155_ADDRESS as `0x${string}` | undefined;
-    if (!contract) return null;
+    if (!contract) return { address: null, balanceEth: null };
     const addr = (await client.readContract({
       address: contract,
       abi: worldCat1155Abi,
@@ -19,9 +20,9 @@ async function getCharityBalance(): Promise<string | null> {
     const wei = await client.getBalance({ address: addr });
     const whole = Number(wei / 1000000000000000000n);
     const frac = Number(wei % 1000000000000000000n) / 1e18;
-    return (whole + frac).toFixed(3) + " ETH";
+    return { address: addr, balanceEth: (whole + frac).toFixed(3) + " ETH" };
   } catch {
-    return null;
+    return { address: null, balanceEth: null };
   }
 }
 
@@ -42,7 +43,7 @@ async function fetchCatMarkers(): Promise<{ location: [number, number]; size: nu
 }
 
 export default async function Home() {
-  const [donation, markers] = await Promise.all([getCharityBalance(), fetchCatMarkers()]);
+  const [charity, markers] = await Promise.all([getCharityInfo(), fetchCatMarkers()]);
   return (
     <section className="relative py-12 sm:py-16 lg:py-20">
       <div className="mx-auto max-w-3xl text-center">
@@ -66,17 +67,31 @@ export default async function Home() {
           </Link>
         </div>
         <div className="mt-6 flex items-center justify-center">
-          <Card className="px-4 py-2 text-sm">
-            Total donations to charity: <span className="font-semibold">{donation ?? "-"}</span>
-          </Card>
+          <div className="rounded-xl border px-4 py-3 inline-flex">
+            <div className="flex items-center gap-3">
+              <Image src="/charity.png" alt="Charity" width={64} height={64} className="rounded-md" />
+              <div className="min-w-0">
+                <div className="text-xs uppercase tracking-wide text-muted-foreground">Donations to charity</div>
+                <div className="mt-1 text-2xl font-semibold leading-none">{charity.balanceEth ?? "-"}</div>
+                {charity.address && (
+                  <div className="mt-1 text-xs truncate">
+                    <a
+                      href={`${catlasChain?.blockExplorers?.default?.url || ""}address/${charity.address}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline text-muted-foreground hover:text-foreground"
+                    >
+                      View address
+                    </a>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div className="mx-auto mt-12 max-w-5xl">
         <Globe config={{ markers }} />
-        <p className="mt-4 text-center text-sm text-muted-foreground">
-          Every discovery can become a collectible. Minting splits proceeds equally between the discoverer,
-          Catlas, and our charity partner—supporting real cats with every mint.
-        </p>
       </div>
 
       <div className="mx-auto mt-12 max-w-4xl">
@@ -109,35 +124,15 @@ export default async function Home() {
             />
           </div>
         </div>
-        <div className="mt-6 max-w-3xl mx-auto text-center">
-          <h3 className="text-lg font-semibold mb-2">Turn moments into impact</h3>
-          <p className="text-sm text-muted-foreground">
-            Snap a cat, let AI help describe it, and mint a shareable ERC‑1155 collectible. Discover cats around the
-            world, collect your favorites, and support animal welfare. Earnings split fairly: one third to the
-            discoverer, one third to Catlas, one third to charity.
-          </p>
-          <div className="mt-4 flex items-center justify-center gap-3">
-            <Link
-              href="/upload"
-              className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 disabled:opacity-50 disabled:pointer-events-none bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4"
-            >
-              Upload a cat
-            </Link>
-            <Link
-              href="/discover"
-              className="inline-flex items-center justify-center rounded-md border text-sm font-medium h-9 px-4"
-            >
-              Explore cats
-            </Link>
-          </div>
-        </div>
       </div>
 
       <div className="mx-auto mt-12 max-w-3xl text-center">
         <Card className="p-4 sm:p-6">
-          <p className="text-sm sm:text-base">
-            Ready to discover and support cats?
-          </p>
+        <h3 className="text-lg font-semibold">Turn moments into impact</h3>
+        <p className="mt-4 text-center text-sm text-muted-foreground">
+          Every discovery can become a collectible. Minting splits proceeds equally between the discoverer,
+          Catlas, and our charity partner—supporting real cats with every mint.
+        </p>
           <div className="mt-3 flex items-center justify-center gap-3">
             <Link
               href="/upload"
