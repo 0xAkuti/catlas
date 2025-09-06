@@ -1,5 +1,6 @@
 "use client";
 
+import { catlasChain } from "@/lib/web3/client";
 import { PrivyProvider } from "@privy-io/react-auth";
 
 export default function Providers({
@@ -12,6 +13,7 @@ export default function Providers({
     <PrivyProvider
       appId={appId || ""}
       config={{
+        defaultChain: catlasChain,
         // Enable embedded wallets for users without wallets on login
         embeddedWallets: {
           ethereum: { createOnLogin: "users-without-wallets" },
