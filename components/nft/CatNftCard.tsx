@@ -68,8 +68,17 @@ export function CatNftCard({
 
           <div className="absolute bottom-3 right-3 flex gap-2">
             {onLike && (
-              <Button onClick={onLike} variant={isLiked ? "default" : "secondary"} size="sm">
-                <Heart className="w-4 h-4 mr-1" />
+              <Button
+                onClick={onLike}
+                variant={isLiked ? "default" : "secondary"}
+                size="sm"
+                className={`shadow-lg backdrop-blur-sm ${
+                  isLiked
+                    ? "bg-white/90 hover:bg-white text-gray-900"
+                    : "bg-white/90 hover:bg-white text-gray-700 hover:text-gray-900"
+                }`}
+              >
+                <Heart className={`w-4 h-4 mr-1 ${isLiked ? "fill-current text-red-500" : "text-gray-600"}`} />
                 {likesCount}
               </Button>
             )}
