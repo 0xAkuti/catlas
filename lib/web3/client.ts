@@ -1,14 +1,17 @@
 import { createPublicClient, http } from "viem";
 import { base, anvil } from "viem/chains";
+import { riseTestnet } from 'rise-wallet';
 
 export const worldcatChain = ((): any => {
-  const id = Number(process.env.NEXT_PUBLIC_CHAIN_ID || 8453);
-  if (id === 31337) return anvil;
+  const id = process.env.NEXT_PUBLIC_CHAIN_NAME || 'anvil';
+  if (id === 'riseTestnet') return riseTestnet;
+  if (id === 'anvil') return anvil;
+  if (id === 'base') return base;
   return base;
 })();
 
 export function getPublicClient() {
-  const rpc = process.env.NEXT_PUBLIC_RPC_URL || (worldcatChain.id === 31337 ? "http://127.0.0.1:8545" : "https://mainnet.base.org");
+  const rpc = worldcatChain.rpcUrls?.default?.http?.[0];
   return createPublicClient({ chain: worldcatChain, transport: http(rpc) });
 }
 

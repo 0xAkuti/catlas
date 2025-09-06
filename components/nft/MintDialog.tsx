@@ -9,6 +9,7 @@ import { getPublicClient } from "@/lib/web3/client";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
 import { createWalletClient, custom } from "viem";
 import { base, anvil } from "viem/chains";
+import { riseTestnet } from 'rise-wallet';
 
 export default function MintDialog({ tokenId }: { tokenId: number }) {
   const [open, setOpen] = useState(false);
@@ -63,7 +64,7 @@ export default function MintDialog({ tokenId }: { tokenId: number }) {
               if (!authenticated || !wallets[0] || !mintPrice) return;
               const provider = await wallets[0].getEthereumProvider?.();
               if (!provider) return;
-              const walletClient = createWalletClient({ chain: anvil, transport: custom(provider) });
+              const walletClient = createWalletClient({ chain: riseTestnet, transport: custom(provider) });
               await walletClient.writeContract({
                 account: wallets[0].address as `0x${string}`,
                 address: process.env.NEXT_PUBLIC_WORLDCAT1155_ADDRESS as `0x${string}`,
