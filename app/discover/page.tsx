@@ -14,9 +14,8 @@ async function fetchCats(q?: string, sort?: string): Promise<Item[]> {
   return json.items || [];
 }
 
-export default async function DiscoverPage({ searchParams }: { searchParams: { q?: string; sort?: string } }) {
-  const q = searchParams?.q || "";
-  const sort = searchParams?.sort || "newest";
+export default async function DiscoverPage({ searchParams }: { searchParams: Promise<{ q?: string; sort?: string }> }) {
+  const { q = "", sort = "newest" } = await searchParams;
   const items = await fetchCats(q, sort);
   return (
     <section className="py-8">
