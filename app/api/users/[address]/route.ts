@@ -91,7 +91,8 @@ export async function GET(_req: NextRequest, { params }: { params: { address: st
   // We read mintPrice from env since computing chain here adds weight; ensure NEXT_PUBLIC_MINT_PRICE_WEI exists as string
   const mintPriceWei = process.env.NEXT_PUBLIC_MINT_PRICE_WEI ? BigInt(process.env.NEXT_PUBLIC_MINT_PRICE_WEI) : 1000000000000000n; // 0.001 ETH default
   const discoveredNum = discoveredCount || 0;
-  const earnedWei = BigInt(Math.max(0, totalMints - discoveredNum)) * mintPriceWei;
+  const mintedMinus = BigInt(Math.max(0, totalMints - discoveredNum));
+  const earnedWei = (mintedMinus * mintPriceWei) / 3n; // 3-way split: creator, platform, charity
 
   return NextResponse.json({
     address,
