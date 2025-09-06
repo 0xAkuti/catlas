@@ -1,5 +1,4 @@
-import Link from "next/link";
-import { ipfsToHttp } from "@/lib/ipfs/gateway";
+import DiscoverCard from "@/components/discover/DiscoverCard";
 import DiscoverMap from "./DiscoverMap";
 
 type Item = { tokenId: number; name?: string; image?: string; city?: string; country?: string; latitude?: number; longitude?: number };
@@ -25,18 +24,7 @@ export default async function DiscoverPage() {
         </div>
         <div className="grid gap-4">
         {items.map((it) => (
-          <Link key={it.tokenId} href={`/cat/${it.tokenId}`} className="rounded-lg border p-3 hover:bg-muted/40 transition">
-            <div className="relative aspect-square w-full overflow-hidden rounded mb-3 bg-muted">
-              {it.image ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={ipfsToHttp(it.image)} alt={it.name || "Cat"} className="w-full h-full object-cover" />
-              ) : null}
-            </div>
-            <div className="text-sm font-medium truncate">{it.name || `Cat #${it.tokenId}`}</div>
-            {(it.city || it.country) && (
-              <div className="text-xs text-muted-foreground truncate">{[it.city, it.country].filter(Boolean).join(", ")}</div>
-            )}
-          </Link>
+          <DiscoverCard key={it.tokenId} item={it} />
         ))}
         {!items.length && <div className="text-sm text-muted-foreground">No cats yet.</div>}
         </div>
