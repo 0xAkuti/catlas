@@ -20,15 +20,36 @@ export async function GET(req: NextRequest) {
   if (email) url.searchParams.set("email", email);
 
   try {
-    const res = await fetch(url.toString(), {
-      headers: {
-        "User-Agent": `WorldCat/1.0 (${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"})`,
-        Referer: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
-        "Accept-Language": "en",
-      },
-      // Nominatim discourages heavy usage; keep default caching minimal
-      cache: "no-store",
-    });
+    // Small retry with timeout to reduce ETIMEDOUTs
+    const attempt = async () => {
+      const controller = new AbortController();
+      const t = setTimeout(() => controller.abort(), 3000);
+      try {
+        const res = await fetch(url.toString(), {
+          headers: {
+            "User-Agent": `WorldCat/1.0 (${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"})`,
+            Referer: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+            "Accept-Language": "en",
+          },
+          cache: "no-store",
+          signal: controller.signal,
+        });
+        clearTimeout(t);
+        return res;
+      } catch (e) {
+        clearTimeout(t);
+        throw e;
+      }
+    };
+
+    let res: Response | null = null;
+    try {
+      res = await attempt();
+    } catch {
+      // brief backoff then retry once
+      await new Promise((r) => setTimeout(r, 400));
+      res = await attempt();
+    }
     if (!res.ok) {
       return NextResponse.json({ error: "Reverse geocode failed" }, { status: 502 });
     }
