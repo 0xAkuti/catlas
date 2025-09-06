@@ -1,6 +1,7 @@
 "use client"
 
 import { AlertCircleIcon, ImageUpIcon, XIcon } from "lucide-react"
+import { useRef } from "react"
 
 import { useFileUpload } from "@/hooks/use-file-upload"
 
@@ -17,6 +18,7 @@ export default function Component({ onSelected, maxSizeMB = 5 }: { onSelected?: 
       openFileDialog,
       removeFile,
       getInputProps,
+      addFiles,
     },
   ] = useFileUpload({
     accept: "image/*",
@@ -32,14 +34,17 @@ export default function Component({ onSelected, maxSizeMB = 5 }: { onSelected?: 
   })
 
   const previewUrl = files[0]?.preview || null
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const isAndroid = typeof navigator !== "undefined" && /Android/i.test(navigator.userAgent)
+  const suppressNextOpenRef = useRef(false)
 
   return (
     <div className="flex flex-col gap-2">
       <div className="relative">
-        {/* Drop area */}
+        {/* Drop area (click opens image picker / photo picker) */}
         <div
           role="button"
-          onClick={openFileDialog}
+          onClick={() => { if (!suppressNextOpenRef.current) openFileDialog(); }}
           onDragEnter={handleDragEnter}
           onDragLeave={handleDragLeave}
           onDragOver={handleDragOver}
@@ -51,6 +56,20 @@ export default function Component({ onSelected, maxSizeMB = 5 }: { onSelected?: 
             {...getInputProps()}
             className="sr-only"
             aria-label="Upload file"
+          />
+          <input
+            ref={fileInputRef}
+            type="file"
+            // Use broad accept to force Android file manager; hook will validate image/*
+            accept="*/*"
+            className="sr-only"
+            aria-label="Choose file"
+            onChange={(e) => {
+              if (e.target.files && e.target.files.length > 0) {
+                addFiles(e.target.files)
+                e.currentTarget.value = ""
+              }
+            }}
           />
           {previewUrl ? (
             <div className="absolute inset-0">
@@ -98,6 +117,24 @@ export default function Component({ onSelected, maxSizeMB = 5 }: { onSelected?: 
         >
           <AlertCircleIcon className="size-3 shrink-0" />
           <span>{errors[0]}</span>
+        </div>
+      )}
+      {isAndroid && (
+        <div className="mt-2 flex items-center justify-center">
+          <button
+            type="button"
+            className="inline-flex items-center gap-2 rounded-md border px-3 py-2 text-sm"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              suppressNextOpenRef.current = true;
+              fileInputRef.current?.click();
+              setTimeout(() => { suppressNextOpenRef.current = false; }, 0);
+            }}
+          >
+            <ImageUpIcon className="size-4" />
+            Choose file
+          </button>
         </div>
       )}
     </div>
