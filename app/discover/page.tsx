@@ -29,7 +29,7 @@ export default async function DiscoverPage({ searchParams }: { searchParams: { q
           {/* @ts-expect-error Server/Client boundary */}
           <DiscoverMap items={items} />
         </div>
-        <div className="grid gap-3">
+        <div className="flex flex-col gap-3">
           {items.map((it) => (
             // @ts-expect-error Server/Client boundary
             <CatListItem key={it.tokenId} item={it} />
