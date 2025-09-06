@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { worldCat1155Abi } from "@/lib/web3/abi/Catlas1155";
 import { getPublicClient } from "@/lib/web3/client";
 import { ipfsToHttp } from "@/lib/ipfs/gateway";
 import CatNftWithLikes from "@/components/nft/CatNftWithLikes";
+import { getSupabaseClient } from "@/lib/supabase/client";
 
 type Props = { params: { id: string } };
 
@@ -46,10 +48,40 @@ export default async function CatPage({ params }: Props) {
     ? { city: meta.location_city, country: meta.location_country }
     : undefined;
 
+  // Fetch discoverer from Supabase and display name
+  const db = getSupabaseClient();
+  const { data: catRow } = await db
+    .from("cats")
+    .select("creator")
+    .eq("token_id", idNum)
+    .maybeSingle();
+  const creator = (catRow?.creator as string | undefined) || undefined;
+
+  let displayName: string | null = null;
+  if (creator) {
+    try {
+      const resUser = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || ""}/api/users/${creator}`, { cache: "no-store" });
+      if (resUser.ok) {
+        const uj = await resUser.json();
+        displayName = uj?.username || uj?.ens || null;
+      }
+    } catch {}
+  }
+
+  const shorten = (addr: string) => addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : "";
+
   return (
     <section className="py-8">
       <div className="mx-auto w-full max-w-md">
         <CatNftWithLikes tokenId={idNum} classification={classification} imageUrl={imageUrl} location={location} />
+        {creator && (
+          <div className="mt-3 text-center text-sm text-muted-foreground">
+            Discovered by {" "}
+            <Link href={`/u/${creator}`} className="underline">
+              {displayName || shorten(creator)}
+            </Link>
+          </div>
+        )}
       </div>
       
     </section>
