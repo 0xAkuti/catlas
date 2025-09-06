@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { CatNftCard } from "@/components/nft/CatNftCard";
 import { ImageCropper } from "@/components/upload/Cropper";
-import StepperDemo from "@/components/comp-523";
+import UploadStepper from "@/components/comp-523";
 import ImageUploader from "@/components/comp-544";
 import exifr from "exifr";
 import { compressToJpegSquare } from "@/lib/image/process";
@@ -17,6 +17,7 @@ import { createWalletClient, custom, decodeEventLog } from "viem";
 import { catlasChain } from "@/lib/web3/client";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { LoaderThree } from "@/components/ui/loader";
 
 type UploadStep = "select" | "crop" | "analyzing" | "result";
 
@@ -45,29 +46,22 @@ export default function UploadPage() {
   const { authenticated } = usePrivy();
   const { wallets } = useWallets();
   const router = useRouter();
+  const analyzeIdRef = useRef(0);
 
   return (
     <section className="py-8">
       <h2 className="text-xl font-semibold">Upload</h2>
-      <p className="mt-2 text-sm text-muted-foreground">
-        Upload a photo or capture one. We’ll extract GPS if available.
-      </p>
 
       <div className="mt-6">
         <div className="mb-6">
-          <StepperDemo />
-        </div>
-        <div className="mb-4">
-          <Progress value={
-            step === "select" ? 10 :
-            step === "crop" ? 40 :
-            step === "analyzing" ? 75 :
-            100
-          } />
+          <UploadStepper value={step === "select" ? 1 : step === "crop" ? 2 : step === "analyzing" ? 3 : 4} />
         </div>
         {step === "select" && (
           <div className="flex flex-col gap-4">
             <ImageUploader onSelected={async (file, preview) => {
+              // Reset analysis state for a fresh upload
+              setAnalysis(null);
+              setTitle("");
               setSelectedFile(file);
               if (previewUrl) URL.revokeObjectURL(previewUrl);
               setPreviewUrl(preview);
@@ -107,22 +101,33 @@ export default function UploadPage() {
                   setStep("analyzing");
                   setProgress(75);
                   setAnalysis(null);
-                  const buffer = await selectedFile.arrayBuffer();
-                  const base64 = btoa(
-                    new Uint8Array(buffer).reduce(
-                      (acc, byte) => acc + String.fromCharCode(byte),
-                      "",
-                    ),
-                  );
+                  const myId = ++analyzeIdRef.current;
+                  const base64 = await new Promise<string>((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                      try {
+                        const result = reader.result as string;
+                        const b64 = result.split(",")[1] || result;
+                        resolve(b64);
+                      } catch (e) {
+                        reject(e);
+                      }
+                    };
+                    reader.onerror = reject;
+                    reader.readAsDataURL(selectedFile);
+                  });
                   const res = await fetch("/api/analyze", {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                    cache: "no-store",
+                    headers: { "Content-Type": "application/json", "Cache-Control": "no-store" },
                     body: JSON.stringify({ imageBase64: base64, gps }),
                   });
                   const json = await res.json();
-                  setAnalysis(json?.result || null);
-                  if (json?.result?.title) setTitle(json.result.title);
-                  setStep("result");
+                  if (myId === analyzeIdRef.current) {
+                    setAnalysis(json?.result || null);
+                    if (json?.result?.title) setTitle(json.result.title);
+                    setStep("result");
+                  }
                   setProgress(100);
                 }}
               >
@@ -170,20 +175,35 @@ export default function UploadPage() {
                 }, 100);
                 // Kick off analyze automatically
                 try {
-                  const buffer = await file.arrayBuffer();
-                  const base64 = btoa(String.fromCharCode(...new Uint8Array(buffer)));
+                  const myId = ++analyzeIdRef.current;
+                  const base64 = await new Promise<string>((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                      try {
+                        const result = reader.result as string;
+                        const b64 = result.split(",")[1] || result;
+                        resolve(b64);
+                      } catch (e) {
+                        reject(e);
+                      }
+                    };
+                    reader.onerror = reject;
+                    reader.readAsDataURL(file);
+                  });
                   const res = await fetch("/api/analyze", {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                    cache: "no-store",
+                    headers: { "Content-Type": "application/json", "Cache-Control": "no-store" },
                     body: JSON.stringify({ imageBase64: base64, gps }),
                   });
                   const json = await res.json();
-                  setAnalysis(json?.result || null);
-                  if (json?.result?.title) setTitle(json.result.title);
-                } finally {
-                  setStep("result");
-                  setProgress(100);
-                }
+                  if (myId === analyzeIdRef.current) {
+                    setAnalysis(json?.result || null);
+                    if (json?.result?.title) setTitle(json.result.title);
+                    setStep("result");
+                    setProgress(100);
+                  }
+                } catch {}
               }}
             />
           </div>
@@ -191,10 +211,7 @@ export default function UploadPage() {
 
         {step === "analyzing" && (
           <div className="flex flex-col items-center gap-4">
-            <div className="rounded-lg border w-full h-24 bg-muted/20 flex items-center justify-center text-sm text-muted-foreground">
-              Analyzing image...
-            </div>
-            <Progress value={progress} className="w-full" />
+            <LoaderThree />
           </div>
         )}
 

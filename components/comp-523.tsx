@@ -8,24 +8,16 @@ import {
 } from "@/components/ui/stepper"
 
 const steps = [
-  {
-    step: 1,
-    title: "Step One",
-  },
-  {
-    step: 2,
-    title: "Step Two",
-  },
-  {
-    step: 3,
-    title: "Step Three",
-  },
+  { step: 1, title: "Upload" },
+  { step: 2, title: "Crop" },
+  { step: 3, title: "Analyze" },
+  { step: 4, title: "Publish" },
 ]
 
-export default function Component() {
+export default function UploadStepper({ value }: { value: number }) {
   return (
-    <div className="space-y-8 text-center">
-      <Stepper defaultValue={2}>
+    <div className="text-center">
+      <Stepper value={value}>
         {steps.map(({ step, title }) => (
           <StepperItem
             key={step}
@@ -44,13 +36,6 @@ export default function Component() {
           </StepperItem>
         ))}
       </Stepper>
-      <p
-        className="text-muted-foreground mt-2 text-xs"
-        role="region"
-        aria-live="polite"
-      >
-        Stepper with inline titles
-      </p>
     </div>
   )
 }
