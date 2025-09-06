@@ -44,9 +44,10 @@ export async function POST(req: NextRequest) {
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
-    const tokenId = Number(searchParams.get("tokenId"));
+    const tokenIdStr = searchParams.get("tokenId");
     const address = (searchParams.get("address") || "").toLowerCase();
-    if (!tokenId) return NextResponse.json({ total: 0, liked: false });
+    const tokenId = tokenIdStr !== null ? Number(tokenIdStr) : NaN;
+    if (Number.isNaN(tokenId)) return NextResponse.json({ total: 0, liked: false });
     const db = getSupabaseClient();
     const { count } = await db
       .from("likes")

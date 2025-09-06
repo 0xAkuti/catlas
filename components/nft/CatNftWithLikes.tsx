@@ -86,7 +86,11 @@ export default function CatNftWithLikes({
       const data = await res.json();
       if (typeof data.liked === "boolean") {
         setLiked(data.liked);
-        setLikes((prev) => prev + (data.liked ? 1 : -1));
+        // Re-fetch total to avoid drift
+        const q = new URLSearchParams({ tokenId: String(tokenId), address: (address || "").toLowerCase() });
+        const res2 = await fetch(`/api/likes?${q.toString()}`, { cache: "no-store" });
+        const d2 = await res2.json();
+        setLikes(d2.total || 0);
       }
     } catch {}
   };
