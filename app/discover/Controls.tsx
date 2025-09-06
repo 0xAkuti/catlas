@@ -40,10 +40,10 @@ export default function DiscoverControls({ q, sort }: { q: string; sort: string 
           placeholder="Search name, city, color, breed..."
         />
       </div>
-      <div>
+      <div className="relative z-20">
         <Select value={sel} onValueChange={onSortChange}>
           <SelectTrigger className="w-[180px]"><SelectValue placeholder="Sort" /></SelectTrigger>
-          <SelectContent>
+          <SelectContent className="z-50">
             <SelectItem value="newest">Newest</SelectItem>
             <SelectItem value="oldest">Oldest</SelectItem>
             <SelectItem value="most_liked">Most liked</SelectItem>
