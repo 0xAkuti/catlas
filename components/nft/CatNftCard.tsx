@@ -40,6 +40,7 @@ interface CatNftCardProps {
   onLike?: () => void;
   onShare?: () => void;
   actions?: React.ReactNode; // Rendered below description
+  supplyCount?: number;
 }
 
 export function CatNftCard({
@@ -51,6 +52,7 @@ export function CatNftCard({
   onLike,
   onShare,
   actions,
+  supplyCount,
 }: CatNftCardProps) {
   return (
     <Card className="overflow-hidden p-0">
@@ -69,6 +71,11 @@ export function CatNftCard({
           )}
 
           <div className="absolute bottom-3 right-3 flex gap-2">
+            {typeof supplyCount === "number" && (
+              <div className="rounded-md px-2 py-1 text-xs shadow bg-white/90 text-gray-700">
+                Minted {supplyCount}
+              </div>
+            )}
             {onLike && (
               <Button
                 onClick={onLike}

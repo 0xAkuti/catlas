@@ -6,6 +6,8 @@ import { CatNftCard } from "@/components/nft/CatNftCard";
 import MintDialog from "@/components/nft/MintDialog";
 import { Button } from "@/components/ui/button";
 import { Share2 } from "lucide-react";
+import { getPublicClient } from "@/lib/web3/client";
+import { worldCat1155Abi } from "@/lib/web3/abi/WorldCat1155";
 
 type Classification = {
   isCat: boolean;
@@ -34,6 +36,7 @@ export default function CatNftWithLikes({
   const { wallets } = useWallets();
   const [likes, setLikes] = useState(0);
   const [liked, setLiked] = useState(false);
+  const [supply, setSupply] = useState<number | undefined>(undefined);
 
   const address = wallets[0]?.address?.toLowerCase();
 
@@ -45,6 +48,15 @@ export default function CatNftWithLikes({
         const data = await res.json();
         setLikes(data.total || 0);
         setLiked(!!data.liked);
+        // Fetch totalSupply
+        const client = getPublicClient();
+        const val = (await client.readContract({
+          address: process.env.NEXT_PUBLIC_WORLDCAT1155_ADDRESS as `0x${string}`,
+          abi: worldCat1155Abi,
+          functionName: "totalSupply",
+          args: [BigInt(tokenId)],
+        })) as bigint;
+        setSupply(Number(val));
       } catch {}
     };
     void load();
@@ -77,6 +89,7 @@ export default function CatNftWithLikes({
       likesCount={likes}
       isLiked={liked}
       onLike={onLike}
+      supplyCount={supply}
       actions={
         <>
           <MintDialog tokenId={tokenId} />
