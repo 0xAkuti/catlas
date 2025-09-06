@@ -13,8 +13,8 @@ export async function POST(req: NextRequest) {
     const pinata = createPinataClient();
     // 1) Upload image -> get image CID
     const imageFile = new File([image], "image.jpg", { type: image.type || "image/jpeg" });
-    const imageRes = await pinata.upload.public.file(imageFile);
-    const imageCid = imageRes.cid || imageRes.IpfsHash || imageRes.requestid || imageRes.id; // handle SDK response variants
+    const imageRes = await pinata.upload.public.file(imageFile).group("237b4ab8-44c7-48ed-a004-f8236dca1f77");
+    const imageCid = imageRes.cid || imageRes.id; // handle SDK response variants
 
     // 2) Patch metadata.image to ipfs://imageCid
     let parsed: any;
@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
     parsed.image = `ipfs://${imageCid}`;
     const metadataFile = new File([JSON.stringify(parsed)], "metadata.json", { type: "application/json" });
     const metadataRes = await pinata.upload.public.file(metadataFile);
-    const cid = metadataRes.cid || metadataRes.IpfsHash || metadataRes.requestid || metadataRes.id;
+    const cid = metadataRes.cid || metadataRes.id;
     return NextResponse.json({ cid, imageCid });
   } catch (err) {
     console.error("/api/ipfs/upload error", err);
