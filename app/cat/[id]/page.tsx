@@ -7,7 +7,8 @@ import CatNftWithLikes from "@/components/nft/CatNftWithLikes";
 type Props = { params: { id: string } };
 
 export default async function CatPage({ params }: Props) {
-  const idNum = Number(params.id);
+  const { id } = await params;
+  const idNum = Number(id);
   if (!Number.isFinite(idNum)) return notFound();
 
   const client = getPublicClient();

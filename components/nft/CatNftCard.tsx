@@ -2,6 +2,7 @@
 
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   Award,
   Camera,
@@ -13,6 +14,7 @@ import {
   Shield,
   Share2,
   Layers,
+  Wallet,
 } from "lucide-react";
 
 type Classification = {
@@ -42,6 +44,7 @@ interface CatNftCardProps {
   onShare?: () => void;
   actions?: React.ReactNode; // Rendered below description
   supplyCount?: number;
+  userBalanceCount?: number;
 }
 
 export function CatNftCard({
@@ -54,6 +57,7 @@ export function CatNftCard({
   onShare,
   actions,
   supplyCount,
+  userBalanceCount,
 }: CatNftCardProps) {
   return (
     <Card className="overflow-hidden p-0">
@@ -73,15 +77,34 @@ export function CatNftCard({
 
           <div className="absolute bottom-3 right-3 flex gap-2">
             {typeof supplyCount === "number" && (
-              <Button
-                variant="secondary"
-                size="sm"
-                className="shadow-lg bg-white/90 hover:bg-white text-gray-700"
-                disabled
-              >
-                <Layers className="w-4 h-4 mr-1 text-gray-600" />
-                {supplyCount}
-              </Button>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      className="shadow-lg bg-white text-gray-700 pointer-events-none"
+                    >
+                      {typeof userBalanceCount === "number" && userBalanceCount > 0 ? (
+                        <>
+                          <Wallet className="w-4 h-4 mr-1 text-gray-600" />
+                          {userBalanceCount}/{supplyCount}
+                        </>
+                      ) : (
+                        <>
+                          <Layers className="w-4 h-4 mr-1 text-gray-600" />
+                          {supplyCount}
+                        </>
+                      )}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    {typeof userBalanceCount === "number" && userBalanceCount > 0
+                      ? `You own ${userBalanceCount} of ${supplyCount}`
+                      : `Total minted: ${supplyCount}`}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             )}
             {onLike && (
               <Button

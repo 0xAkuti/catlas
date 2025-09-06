@@ -37,13 +37,14 @@ export default function CatNftWithLikes({
   const [likes, setLikes] = useState(0);
   const [liked, setLiked] = useState(false);
   const [supply, setSupply] = useState<number | undefined>(undefined);
+  const [userBal, setUserBal] = useState<number | undefined>(undefined);
 
-  const address = wallets[0]?.address?.toLowerCase();
+  const address = wallets[0]?.address as `0x${string}` | undefined;
 
   useEffect(() => {
     const load = async () => {
       try {
-        const q = new URLSearchParams({ tokenId: String(tokenId), address: address || "" });
+        const q = new URLSearchParams({ tokenId: String(tokenId), address: (address || "").toLowerCase() });
         const res = await fetch(`/api/likes?${q.toString()}`, { cache: "no-store" });
         const data = await res.json();
         setLikes(data.total || 0);
@@ -57,6 +58,15 @@ export default function CatNftWithLikes({
           args: [BigInt(tokenId)],
         })) as bigint;
         setSupply(Number(val));
+        if (address) {
+          const bal = (await client.readContract({
+            address: process.env.NEXT_PUBLIC_WORLDCAT1155_ADDRESS as `0x${string}`,
+            abi: worldCat1155Abi,
+            functionName: "balanceOf",
+            args: [address, BigInt(tokenId)],
+          })) as bigint;
+          setUserBal(Number(bal));
+        }
       } catch {}
     };
     void load();
@@ -90,6 +100,7 @@ export default function CatNftWithLikes({
       isLiked={liked}
       onLike={onLike}
       supplyCount={supply}
+      userBalanceCount={userBal}
       actions={
         <>
           <MintDialog tokenId={tokenId} />
