@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseClient } from "@/lib/supabase/client";
+import { getPublicClient } from "@/lib/web3/client";
+import { worldCat1155Abi } from "@/lib/web3/abi/WorldCat1155";
 
 async function fetchEnsName(address: string): Promise<string | null> {
   try {
@@ -50,12 +52,25 @@ export async function GET(_req: NextRequest, { params }: { params: { address: st
   let totalMints = 0;
   if (discoveredItems && discoveredItems.length) {
     try {
-      const ids = discoveredItems.map((r: any) => r.token_id);
-      // Hit our cats endpoint individually to avoid re-importing client in route; this keeps serverless size small
-      // But better: call chain directly in future optimization
-      for (const id of ids) {
-        // We have public client in another module; to limit imports here, fetch via /api/cat-supply?tokenId=
-        // For now, compute via a helper endpoint would be better; fallback to 0 here to keep fast
+      const client = getPublicClient();
+      const contract = process.env.NEXT_PUBLIC_WORLDCAT1155_ADDRESS as `0x${string}`;
+      if (contract) {
+        const supplies = await Promise.all(
+          discoveredItems.map(async (r: any) => {
+            try {
+              const v = (await client.readContract({
+                address: contract,
+                abi: worldCat1155Abi,
+                functionName: "totalSupply",
+                args: [BigInt(r.token_id)],
+              })) as bigint;
+              return Number(v);
+            } catch {
+              return 0;
+            }
+          })
+        );
+        totalMints = supplies.reduce((a, b) => a + b, 0);
       }
     } catch {}
   }
