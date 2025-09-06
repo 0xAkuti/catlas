@@ -4,6 +4,8 @@ import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { CatNftCard } from "@/components/nft/CatNftCard";
 import { ImageCropper } from "@/components/upload/Cropper";
+import StepperDemo from "@/components/comp-523";
+import ImageUploader from "@/components/comp-544";
 import exifr from "exifr";
 import { compressToJpegSquare } from "@/lib/image/process";
 import { Progress } from "@/components/ui/progress";
@@ -52,6 +54,9 @@ export default function UploadPage() {
       </p>
 
       <div className="mt-6">
+        <div className="mb-6">
+          <StepperDemo />
+        </div>
         <div className="mb-4">
           <Progress value={
             step === "select" ? 10 :
@@ -62,54 +67,37 @@ export default function UploadPage() {
         </div>
         {step === "select" && (
           <div className="flex flex-col gap-4">
-            <div>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                capture="environment"
-                onChange={async (e) => {
-                  const file = e.target.files?.[0] || null;
-                  setSelectedFile(file);
-                  if (previewUrl) URL.revokeObjectURL(previewUrl);
-                  const url = file ? URL.createObjectURL(file) : null;
-                  setPreviewUrl(url);
-                  if (file) {
-                    try {
-                      const exif = await exifr.gps(file);
-                      if (exif && exif.latitude && exif.longitude) {
-                        setGps({ lat: exif.latitude, lng: exif.longitude });
-                        try {
-                          const resp = await fetch(
-                            `/api/geocode/reverse?lat=${exif.latitude}&lon=${exif.longitude}`,
-                          );
-                          if (resp.ok) {
-                            const loc = await resp.json();
-                            setLocation(loc);
-                          } else {
-                            setLocation(null);
-                          }
-                        } catch {
-                          setLocation(null);
-                        }
-                      } else {
-                        setGps(null);
-                        setLocation(null);
-                      }
-                    } catch {
-                      setGps(null);
+            <ImageUploader onSelected={async (file, preview) => {
+              setSelectedFile(file);
+              if (previewUrl) URL.revokeObjectURL(previewUrl);
+              setPreviewUrl(preview);
+              try {
+                const exif = await exifr.gps(file);
+                if (exif && exif.latitude && exif.longitude) {
+                  setGps({ lat: exif.latitude, lng: exif.longitude });
+                  try {
+                    const resp = await fetch(
+                      `/api/geocode/reverse?lat=${exif.latitude}&lon=${exif.longitude}`,
+                    );
+                    if (resp.ok) {
+                      const loc = await resp.json();
+                      setLocation(loc);
+                    } else {
                       setLocation(null);
                     }
-                    setStep("crop");
+                  } catch {
+                    setLocation(null);
                   }
-                }}
-              />
-              {selectedFile && (
-                <p className="mt-2 text-xs text-muted-foreground">
-                  Selected: {selectedFile.name}
-                </p>
-              )}
-            </div>
+                } else {
+                  setGps(null);
+                  setLocation(null);
+                }
+              } catch {
+                setGps(null);
+                setLocation(null);
+              }
+              setStep("crop");
+            }} />
 
             <div className="flex gap-3">
               <Button
@@ -170,7 +158,32 @@ export default function UploadPage() {
                 if (previewUrl) URL.revokeObjectURL(previewUrl);
                 const nextUrl = URL.createObjectURL(file);
                 setPreviewUrl(nextUrl);
-                setStep("select");
+                setStep("analyzing");
+                setProgress(0);
+                const start = Date.now();
+                const duration = 5000;
+                const timer = setInterval(() => {
+                  const elapsed = Date.now() - start;
+                  const pct = Math.min(100, Math.round((elapsed / duration) * 100));
+                  setProgress(pct);
+                  if (pct >= 100) clearInterval(timer);
+                }, 100);
+                // Kick off analyze automatically
+                try {
+                  const buffer = await file.arrayBuffer();
+                  const base64 = btoa(String.fromCharCode(...new Uint8Array(buffer)));
+                  const res = await fetch("/api/analyze", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ imageBase64: base64, gps }),
+                  });
+                  const json = await res.json();
+                  setAnalysis(json?.result || null);
+                  if (json?.result?.title) setTitle(json.result.title);
+                } finally {
+                  setStep("result");
+                  setProgress(100);
+                }
               }}
             />
           </div>
@@ -178,10 +191,10 @@ export default function UploadPage() {
 
         {step === "analyzing" && (
           <div className="flex flex-col items-center gap-4">
-            <div className="rounded-lg border w-full h-48 bg-muted/20 flex items-center justify-center text-sm text-muted-foreground">
+            <div className="rounded-lg border w-full h-24 bg-muted/20 flex items-center justify-center text-sm text-muted-foreground">
               Analyzing image...
             </div>
-            <p className="text-xs text-muted-foreground">This may take a few seconds.</p>
+            <Progress value={progress} className="w-full" />
           </div>
         )}
 
