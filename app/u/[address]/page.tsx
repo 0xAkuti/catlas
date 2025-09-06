@@ -1,5 +1,5 @@
 import { CatListItem } from "@/components/cats/CatListItem";
-import { UsernameEditor } from "@/components/user/UsernameEditor";
+import { UserHeader } from "@/components/user/UserHeader";
 import { Card } from "@/components/ui/card";
 
 type Item = { tokenId: number; name?: string; image?: string; city?: string; country?: string };
@@ -18,11 +18,8 @@ export default async function UserPage({ params }: { params: { address: string }
 
   return (
     <section className="py-8">
-      <div className="flex items-center justify-between gap-4">
-        <h2 className="text-xl font-semibold">Profile</h2>
-        {/* @ts-expect-error Server/Client boundary */}
-        <UsernameEditor address={address} />
-      </div>
+      {/* @ts-expect-error Server/Client boundary */}
+      <UserHeader address={address} />
       <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {/* Stats Card - populated client-side via API to keep server lean */}
         <Stats address={address} />
