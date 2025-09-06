@@ -10,6 +10,7 @@ import exifr from "exifr";
 import { compressToJpegSquare } from "@/lib/image/process";
 // import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { worldCat1155Abi } from "@/lib/web3/abi/Catlas1155";
 import { getPublicClient } from "@/lib/web3/client";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
@@ -37,6 +38,11 @@ export default function UploadPage() {
     eyeColor?: string;
     pose?: string;
     sceneDescription?: string;
+    welfareCheck?: {
+      attentionNeeded: boolean;
+      indicators?: string[];
+      recommendation?: string;
+    };
     [key: string]: unknown;
   };
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
@@ -48,6 +54,7 @@ export default function UploadPage() {
   const { wallets } = useWallets();
   const router = useRouter();
   const analyzeIdRef = useRef(0);
+  const [showHealthNotice, setShowHealthNotice] = useState(false);
 
   return (
     <section className="py-8">
@@ -126,9 +133,13 @@ export default function UploadPage() {
                   });
                   const json = await res.json();
                   if (myId === analyzeIdRef.current) {
-                    setAnalysis(json?.result || null);
-                    if (json?.result?.title) setTitle(json.result.title);
+                    const next = (json?.result || null) as Analysis | null;
+                    setAnalysis(next);
+                    if (next?.title) setTitle(next.title);
                     setStep("result");
+                    if (next?.welfareCheck?.attentionNeeded || next?.welfareCheck?.recommendation === "consult_vet") {
+                      setShowHealthNotice(true);
+                    }
                   }
                   setProgress(100);
                 }}
@@ -200,10 +211,14 @@ export default function UploadPage() {
                   });
                   const json = await res.json();
                   if (myId === analyzeIdRef.current) {
-                    setAnalysis(json?.result || null);
-                    if (json?.result?.title) setTitle(json.result.title);
+                    const next = (json?.result || null) as Analysis | null;
+                    setAnalysis(next);
+                    if (next?.title) setTitle(next.title);
                     setStep("result");
                     setProgress(100);
+                    if (next?.welfareCheck?.attentionNeeded || next?.welfareCheck?.recommendation === "consult_vet") {
+                      setShowHealthNotice(true);
+                    }
                   }
                 } catch {}
               }}
@@ -219,6 +234,54 @@ export default function UploadPage() {
 
         {step === "result" && (
           <div className="flex flex-col gap-4">
+            <Dialog open={showHealthNotice} onOpenChange={setShowHealthNotice}>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Potential welfare concern</DialogTitle>
+                  <DialogDescription>
+                    We noticed signs that may indicate this cat needs attention. This is not a medical
+                    diagnosis, but a prompt to be cautious and compassionate.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="text-sm space-y-2">
+                  {analysis?.welfareCheck?.indicators?.length ? (
+                    <div>
+                      <span className="font-medium">What we saw:</span>
+                      <ul className="mt-1 list-disc pl-5">
+                        {analysis.welfareCheck.indicators.map((it, idx) => (
+                          <li key={idx} className="text-muted-foreground">{it.replaceAll("_", " ")}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ) : null}
+                  {analysis?.welfareCheck?.recommendation ? (
+                    <div>
+                      <span className="font-medium">Suggested next step:</span>{" "}
+                      <span className="text-muted-foreground">
+                        {analysis.welfareCheck.recommendation === "consult_vet"
+                          ? "Consult a local veterinarian or animal welfare organization."
+                          : analysis.welfareCheck.recommendation === "monitor"
+                          ? "Monitor from a safe distance and check again soon."
+                          : analysis.welfareCheck.recommendation}
+                      </span>
+                    </div>
+                  ) : null}
+                  <p className="text-muted-foreground">
+                    Please consider contacting local animal services or a nearby vet for
+                    guidance.
+                  </p>
+                </div>
+                <DialogFooter>
+                  <Button
+                    variant="secondary"
+                    onClick={() => window.open("https://www.google.com/search?q=animal+rescue+near+me", "_blank")}
+                  >
+                    Find local help
+                  </Button>
+                  <Button onClick={() => setShowHealthNotice(false)}>OK</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
             {analysis?.isCat === false ? (
               <div className="mx-auto w-full max-w-md">
                 <div className="rounded-md border border-red-300 bg-red-50 p-4 text-red-900">
