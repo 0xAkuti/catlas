@@ -13,7 +13,8 @@ export async function GET(req: NextRequest) {
   url.searchParams.set("format", "jsonv2");
   url.searchParams.set("lat", lat);
   url.searchParams.set("lon", lon);
-  url.searchParams.set("zoom", "10");
+  // Request more granular locality info
+  url.searchParams.set("zoom", "14");
   url.searchParams.set("addressdetails", "1");
   url.searchParams.set("accept-language", "en");
   if (email) url.searchParams.set("email", email);
@@ -33,7 +34,17 @@ export async function GET(req: NextRequest) {
     }
     const data = await res.json();
     const address = data?.address || {};
-    const city = address.city || address.town || address.village || address.hamlet || null;
+    const city =
+      address.city ||
+      address.town ||
+      address.village ||
+      address.hamlet ||
+      address.municipality ||
+      address.city_district ||
+      address.suburb ||
+      address.county ||
+      address.state_district ||
+      null;
     const country = address.country || null;
     return NextResponse.json({ city, country });
   } catch (err) {
