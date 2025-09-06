@@ -63,7 +63,7 @@ export async function GET(req: NextRequest) {
     const items = (data || []).map((row: any) => ({
       tokenId: row.token_id,
       name: row.name,
-      image: row.metadata?.image || (row.cid ? `ipfs://${row.cid}` : undefined),
+      image: row.metadata?.image || undefined,
       city: row.city,
       country: row.country,
       latitude: row.latitude ?? undefined,
