@@ -31,8 +31,9 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 OPENROUTER_API_KEY=sk-or-xxxx
 OPENROUTER_MODEL=google/gemini-2.5-flash
 
-# IPFS (web3.storage)
-WEB3_STORAGE_TOKEN=
+# IPFS (Pinata)
+PINATA_JWT=
+PINATA_GATEWAY=
 
 # Supabase (local dev)
 NEXT_PUBLIC_SUPABASE_URL=http://localhost:54321
