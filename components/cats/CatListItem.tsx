@@ -84,22 +84,22 @@ export function CatListItem({ item }: { item: Item }) {
   };
 
   return (
-    <Link href={`/cat/${item.tokenId}`} className="rounded-lg border p-3 hover:bg-muted/40 transition flex items-center gap-3">
-      <div className="relative w-16 h-16 shrink-0 overflow-hidden rounded bg-muted">
+    <Link href={`/cat/${item.tokenId}`} className="w-full max-w-full overflow-hidden rounded-lg border p-2 sm:p-3 hover:bg-muted/40 transition flex items-center gap-2 sm:gap-3">
+      <div className="relative w-10 h-10 sm:w-14 sm:h-14 shrink-0 overflow-hidden rounded bg-muted">
         {item.image && (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={ipfsToHttp(item.image)} alt={item.name || "Cat"} className="w-full h-full object-cover" />
         )}
       </div>
       <div className="min-w-0 flex-1">
-        <div className="text-sm font-medium truncate">{item.name || `Cat #${item.tokenId}`}</div>
+        <div className="text-[13px] sm:text-sm font-medium truncate">{item.name || `Cat #${item.tokenId}`}</div>
         {(item.city || item.country) && (
-          <div className="text-xs text-muted-foreground truncate">{[item.city, item.country].filter(Boolean).join(", ")}</div>
+          <div className="text-[11px] sm:text-xs text-muted-foreground truncate">{[item.city, item.country].filter(Boolean).join(", ")}</div>
         )}
       </div>
       <div className="flex items-center gap-2 shrink-0">
         {typeof supply === "number" && (
-          <Button variant="secondary" size="sm" className="shadow bg-white text-gray-700">
+          <Button variant="secondary" size="sm" className="h-7 shadow bg-white text-gray-700 px-2">
             <Layers className="w-4 h-4 mr-1 text-gray-600" />
             {formatCount(supply)}
           </Button>
@@ -108,7 +108,7 @@ export function CatListItem({ item }: { item: Item }) {
           onClick={onToggleLike}
           variant={liked ? "default" : "secondary"}
           size="sm"
-          className={`shadow backdrop-blur-sm ${liked ? "bg-white text-gray-900" : "bg-white text-gray-700"}`}
+          className={`h-7 shadow backdrop-blur-sm px-2 ${liked ? "bg-white text-gray-900" : "bg-white text-gray-700"}`}
         >
           <Heart className={`w-4 h-4 mr-1 ${liked ? "fill-current text-red-500" : "text-gray-600"}`} />
           {formatCount(likes)}
