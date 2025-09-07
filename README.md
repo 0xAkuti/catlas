@@ -1,4 +1,4 @@
-# Calas
+# 🐾 Calas 🌍
 
 Catlas is a playful social app that lets you explore your neighborhood and the world. Snap a street cat, pin it on the map, and share the joy with cat lovers everywhere. Built in ETHIstanbul Sep 2025.
 
