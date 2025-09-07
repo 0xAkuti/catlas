@@ -7,7 +7,7 @@ import Providers from "@/components/providers/PrivyProvider";
 import AuthButtons from "@/components/auth/AuthButtons";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Menu } from "lucide-react";
+import { Menu, Heart } from "lucide-react";
 import { AppToaster } from "@/components/ui/sonner";
 
 const ubuntu = Ubuntu({
@@ -57,6 +57,7 @@ export default function RootLayout({
       <body className={`${ubuntu.variable} ${geistMono.variable} font-sans antialiased`}>
         <Providers>
           <AppToaster />
+          <div className="min-h-screen flex flex-col">
           <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
           <div className="mx-auto max-w-screen-md md:max-w-screen-lg lg:max-w-screen-xl px-4 py-3 flex items-center justify-between">
             <Link href="/" className="font-semibold text-lg tracking-tight flex items-center gap-2">
@@ -111,9 +112,18 @@ export default function RootLayout({
             </div>
           </div>
           </header>
-          <main className="mx-auto max-w-screen-md md:max-w-screen-lg lg:max-w-screen-xl px-4">
-          {children}
+          <main className="flex-1 mx-auto max-w-screen-md md:max-w-screen-lg lg:max-w-screen-xl px-4">
+            {children}
           </main>
+          <footer className="mt-10 border-t">
+            <div className="mx-auto max-w-screen-md md:max-w-screen-lg lg:max-w-screen-xl px-4 py-6">
+              <p className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                A Global Map of Cats, Made by Cat Lovers Everywhere
+                <Heart className="h-4 w-4 text-red-500" />
+              </p>
+            </div>
+          </footer>
+          </div>
         </Providers>
       </body>
     </html>

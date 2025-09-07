@@ -37,19 +37,19 @@ export function UserStats({ address }: { address: string }) {
     <Card className="p-4 col-span-full">
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <div>
-          <div className="text-xs text-muted-foreground">Discovered</div>
+          <div className="text-xs text-muted-foreground">Cats Discovered</div>
           <div className="text-lg font-semibold">{loading ? "-" : stats?.discovered ?? 0}</div>
         </div>
         <div>
-          <div className="text-xs text-muted-foreground">Minted</div>
+          <div className="text-xs text-muted-foreground">Mints Received</div>
           <div className="text-lg font-semibold">{loading ? "-" : stats?.minted ?? 0}</div>
         </div>
         <div>
-          <div className="text-xs text-muted-foreground">Earned</div>
+          <div className="text-xs text-muted-foreground">Earnings</div>
           <div className="text-lg font-semibold">{loading ? "-" : formatEth(stats?.earnedWei)}</div>
         </div>
         <div>
-          <div className="text-xs text-muted-foreground">Likes</div>
+          <div className="text-xs text-muted-foreground">Likes Received</div>
           <div className="text-lg font-semibold">{loading ? "-" : stats?.likes ?? 0}</div>
         </div>
       </div>

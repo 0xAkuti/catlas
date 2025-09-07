@@ -148,7 +148,7 @@ export default async function Home() {
 
       <div className="mx-auto mt-12 max-w-3xl text-center">
         <Card className="p-4 sm:p-6">
-        <h3 className="text-lg font-semibold">Turn moments into impact</h3>
+        <h3 className="text-lg font-semibold">Your discoveries help cats worldwide</h3>
         <p className="mt-4 text-center text-sm text-muted-foreground">
           Every discovery can become a collectible. Minting splits proceeds equally between the discoverer,
           Catlas, and <a href="https://pawthereum.com" target="_blank" rel="noopener noreferrer" className="underline">animal welfare charity</a>, supporting real cats with every mint.

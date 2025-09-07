@@ -58,7 +58,7 @@ export default function UploadPage() {
 
   return (
     <section className="py-8">
-      <h2 className="text-xl font-semibold">Upload</h2>
+      <h2 className="text-xl font-semibold">Upload a cat</h2>
 
       <div className="mt-6">
         <div className="mb-6">
