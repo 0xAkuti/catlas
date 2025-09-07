@@ -1,66 +1,41 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CATLAS
 
-## Getting Started
+Catlas is a playful social app that helps you explore your neighborhood and the world. Snap a street cat, pin it on the map, and share the joy with cat lovers everywhere.
 
-First, run the development server:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## The Problem We're Solving
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Today, many people spend their lives staring at screens, trapped indoors, isolated from their communities. This digital isolation is creating an epidemic of loneliness and depression. 
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Meanwhile, countless street cats live in our neighborhoods, some are well-cared for by communities like those in Turkey, others struggling on their own. But everywhere, these cats could be the bridge that reconnects us all.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Our Solution
 
-## Environment variables
+Catlas gets people outside and exploring their neighborhoods while connecting them with cat lovers around the world. Our social app transforms casual cat encounters into meaningful community experiences.
 
-Create a `.env.local` file with:
+## How It Works
 
-```
-NEXT_PUBLIC_APP_URL=http://localhost:3000
+Think Pokémon GO meets Zora, but for cat lovers. When you spot a street cat, snap a photo and upload it to Catlas. Our app instantly creates a cat profile and pins the exact location on our global map. Other users can then discover cats from around the world, "like" their favorites, and mint them as NFTs.
 
-# OpenRouter via OpenAI SDK
-OPENROUTER_API_KEY=sk-or-xxxx
-OPENROUTER_MODEL=google/gemini-2.5-flash
+## Key Features
 
-# IPFS (Pinata)
-PINATA_JWT=
-PINATA_GATEWAY=
+Global Cat Map: Real-time uploads create a living map of street cats worldwide
+Earn While You Explore: Cat discoverers earn rewards when others mint their photos as NFTs
+AI-Powered Discovery: Smart search finds cats by location, breed, or unique features
+AI-Powered Cat check: AI will verify uploaded images, detect cat breed and also if the cat has welfare concerns and needs help
+Built-in Charity: One-third of all NFT sales goes to animal rescue organizations (defined by smart contract)
+Community Building: Leaderboards and local meetups bring cat lovers together in person
+Decentralized Storage: Cat photos and NTF metadata are stored using IPFS
 
-# Supabase (local dev)
-NEXT_PUBLIC_SUPABASE_URL=http://localhost:54321
-NEXT_PUBLIC_SUPABASE_ANON_KEY=dev_anon_key
+## TechStack
 
-# Wallet (Privy)
-NEXT_PUBLIC_PRIVY_APP_ID=
+Next.js Modern frontend using latest next.js
+ERC1155 NFT Custom and gas efficient ERC1155 contract using Solidity that contains all Catlas NFTs allows users to add new cats and shares profit with cat discoverers and charity
+Privy + viem for interacting with Rise Testnet we use privy + viem/wagmi
+OpenRouter Using OpenRouter with Gemini and custom prompt to analyze uploaded cat images, extract features, check their health condition, describe the scene, etc
+IPFS + Supabase Most of the data (NFT token data and images) is stored decentralized on IPFS, only likes are stored in our database, we also use the database for faster data querying
 
-# Chain config (Base by default)
-NEXT_PUBLIC_CHAIN_ID=8453
-NEXT_PUBLIC_RPC_URL=https://mainnet.base.org
+## Contract Address 
+https://explorer.testnet.riselabs.xyz/address/0x5bA687A58b988096402EA8b839EA0583FeB9C1FB
 
-# Charity payout address (also settable at contract deploy time)
-CHARITY_PAYOUT_ADDRESS=0x0000000000000000000000000000000000000000
-```
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
