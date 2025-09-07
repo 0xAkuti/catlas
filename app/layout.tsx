@@ -26,6 +26,10 @@ export const metadata: Metadata = {
   description:
     "Share cats found around the world. Discover, upload, and mint unique cat NFTs.",
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0b0f19" },
+  ],
   icons: {
     icon: '/favicon.png',
   },
