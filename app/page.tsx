@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { getPublicClient } from "@/lib/web3/client";
 import { worldCat1155Abi } from "@/lib/web3/abi/Catlas1155";
 import { catlasChain } from "@/lib/web3/client";
-import { PawPrint } from "lucide-react";
+import { PawPrint, MapPin, Coins, HeartHandshake, Users } from "lucide-react";
 
 async function getCharityInfo(): Promise<{ address: `0x${string}` | null; balanceEth: string | null }> {
   try {
@@ -50,8 +50,7 @@ export default async function Home() {
       <div className="mx-auto max-w-3xl text-center">
         <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Catlas</h1>
         <p className="mt-4 text-base text-muted-foreground">
-          Share cats found around the world. Record or upload a photo, we’ll detect if it’s a cat,
-          and help you mint a unique, collectible NFT.
+        Catlas is a playful social app that helps you explore your neighborhood and the world. Snap a street cat, pin it on the map, and share the joy with cat lovers everywhere.
         </p>
         <div className="mt-6 flex items-center justify-center gap-3">
           <Link
@@ -91,11 +90,11 @@ export default async function Home() {
           </div>
         </div>
       </div>
-      <div className="mx-auto mt-12 max-w-5xl">
+      <div className="mx-auto mt-4 sm:mt-4 max-w-5xl">
         <Globe config={{ markers }} />
       </div>
 
-      <div className="mx-auto mt-12 max-w-4xl">
+      <div className="mx-auto mt-4 max-w-4xl">
         <div className="grid gap-2 sm:gap-4 sm:grid-cols-3">
           <div className="p-3 sm:p-4 sm:rounded-xl sm:border">
             <div className="flex items-center gap-2 mb-1">
@@ -120,12 +119,31 @@ export default async function Home() {
           </div>
         </div>
       </div>
-
       <div className="mt-12 relative left-1/2 right-1/2 w-screen -ml-[50vw] -mr-[50vw]">
         <div
           className="h-[220px] sm:h-[280px] md:h-[360px] lg:h-[420px] w-screen marquee-bg"
           style={{ backgroundImage: 'url(/section-banner.png)' }}
         />
+      </div>
+      <div className="mx-auto mt-10 max-w-4xl">
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="flex items-start gap-3">
+            <div className="rounded-md bg-primary/10 p-2 text-primary"><MapPin className="h-5 w-5" /></div>
+            <p className="text-sm"><span className="font-medium">Real‑Time World Map</span> – Every street cat pinned where it’s found.</p>
+          </div>
+          <div className="flex items-start gap-3">
+            <div className="rounded-md bg-primary/10 p-2 text-primary"><Coins className="h-5 w-5" /></div>
+            <p className="text-sm"><span className="font-medium">Earn While You Explore</span>: Discoverers earn when others mint their photos as NFTs.</p>
+          </div>
+          <div className="flex items-start gap-3">
+            <div className="rounded-md bg-primary/10 p-2 text-primary"><HeartHandshake className="h-5 w-5" /></div>
+            <p className="text-sm"><span className="font-medium">Mintable Memories</span> – Collect and support animal rescues with each NFT.</p>
+          </div>
+          <div className="flex items-start gap-3">
+            <div className="rounded-md bg-primary/10 p-2 text-primary"><Users className="h-5 w-5" /></div>
+            <p className="text-sm"><span className="font-medium">Global Cat Community</span> – Meet new friends and discover cats together.</p>
+          </div>
+        </div>
       </div>
 
       <div className="mx-auto mt-12 max-w-3xl text-center">
