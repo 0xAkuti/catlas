@@ -76,6 +76,13 @@ export function CatListItem({ item }: { item: Item }) {
     } catch {}
   };
 
+  const formatCount = (value: number | undefined) => {
+    if (typeof value !== "number" || !Number.isFinite(value)) return "0";
+    if (value < 1000) return String(value);
+    if (value < 1_000_000) return `${Math.round(value / 1000)}K`;
+    return `${Math.round(value / 1_000_000)}M`;
+  };
+
   return (
     <Link href={`/cat/${item.tokenId}`} className="rounded-lg border p-3 hover:bg-muted/40 transition flex items-center gap-3">
       <div className="relative w-16 h-16 shrink-0 overflow-hidden rounded bg-muted">
@@ -90,11 +97,11 @@ export function CatListItem({ item }: { item: Item }) {
           <div className="text-xs text-muted-foreground truncate">{[item.city, item.country].filter(Boolean).join(", ")}</div>
         )}
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 shrink-0">
         {typeof supply === "number" && (
           <Button variant="secondary" size="sm" className="shadow bg-white text-gray-700">
             <Layers className="w-4 h-4 mr-1 text-gray-600" />
-            {supply}
+            {formatCount(supply)}
           </Button>
         )}
         <Button
@@ -104,7 +111,7 @@ export function CatListItem({ item }: { item: Item }) {
           className={`shadow backdrop-blur-sm ${liked ? "bg-white text-gray-900" : "bg-white text-gray-700"}`}
         >
           <Heart className={`w-4 h-4 mr-1 ${liked ? "fill-current text-red-500" : "text-gray-600"}`} />
-          {likes}
+          {formatCount(likes)}
         </Button>
       </div>
     </Link>
