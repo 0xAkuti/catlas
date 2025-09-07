@@ -118,10 +118,13 @@ export default function CatNftWithLikes({
             variant="secondary"
             onClick={async () => {
               const url = `${process.env.NEXT_PUBLIC_APP_URL || ""}/cat/${tokenId}`;
+              const niceTitle = classification.title || "A Cat on Catlas";
+              const where = location?.city || location?.country ? ` in ${[location?.city, location?.country].filter(Boolean).join(", ")}` : "";
+              const text = `I discovered this purrfect cat${where} on Catlas: ${niceTitle} 🐾`;
               if (navigator.share) {
-                try { await navigator.share({ url }); return; } catch {}
+                try { await navigator.share({ title: niceTitle, text, url }); return; } catch {}
               }
-              try { await navigator.clipboard.writeText(url); } catch {}
+              try { await navigator.clipboard.writeText(`${text} ${url}`); } catch {}
             }}
           >
             <Share2 className="w-4 h-4 mr-1" /> Share
