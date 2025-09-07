@@ -1,6 +1,6 @@
-# CATLAS
+# Calas
 
-Catlas is a playful social app that helps you explore your neighborhood and the world. Snap a street cat, pin it on the map, and share the joy with cat lovers everywhere.
+Catlas is a playful social app that lets you explore your neighborhood and the world. Snap a street cat, pin it on the map, and share the joy with cat lovers everywhere. Built in ETHIstanbul Sep 2025.
 
 
 ## The Problem We're Solving
@@ -37,5 +37,8 @@ IPFS + Supabase Most of the data (NFT token data and images) is stored decentral
 
 ## Contract Address 
 https://explorer.testnet.riselabs.xyz/address/0x5bA687A58b988096402EA8b839EA0583FeB9C1FB
+
+## Live Demo
+https://catlas.xyz 
 
 
