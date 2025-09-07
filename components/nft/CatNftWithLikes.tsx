@@ -26,11 +26,15 @@ export default function CatNftWithLikes({
   classification,
   imageUrl,
   location,
+  discovererName,
+  discovererAddress,
 }: {
   tokenId: number;
   classification: Classification;
   imageUrl?: string | null;
   location?: { city?: string; country?: string };
+  discovererName?: string | null;
+  discovererAddress?: string | null;
 }) {
   const { authenticated, login } = usePrivy();
   const { wallets } = useWallets();
@@ -105,6 +109,8 @@ export default function CatNftWithLikes({
       onLike={onLike}
       supplyCount={supply}
       userBalanceCount={userBal}
+      discovererName={discovererName ?? undefined}
+      discovererAddress={discovererAddress ?? undefined}
       actions={
         <>
           <MintDialog tokenId={tokenId} />

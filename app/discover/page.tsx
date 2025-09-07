@@ -19,8 +19,7 @@ export default async function DiscoverPage({ searchParams }: { searchParams: Pro
   const items = await fetchCats(q, sort);
   return (
     <section className="py-8">
-      <h2 className="text-xl font-semibold">Discover</h2>
-      <p className="mt-2 text-sm text-muted-foreground">Explore recently published cats.</p>
+      <h2 className="text-xl font-semibold">Discover cats around the world</h2>
       <Controls q={q} sort={sort} />
       <div className="mt-6 grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2 relative z-10">

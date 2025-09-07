@@ -1,6 +1,7 @@
 "use client";
 
 import { Card } from "@/components/ui/card";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
@@ -15,6 +16,7 @@ import {
   Share2,
   Layers,
   Wallet,
+  Binoculars,
 } from "lucide-react";
 
 type Classification = {
@@ -45,6 +47,8 @@ interface CatNftCardProps {
   actions?: React.ReactNode; // Rendered below description
   supplyCount?: number;
   userBalanceCount?: number;
+  discovererName?: string;
+  discovererAddress?: string;
 }
 
 export function CatNftCard({
@@ -58,6 +62,8 @@ export function CatNftCard({
   actions,
   supplyCount,
   userBalanceCount,
+  discovererName,
+  discovererAddress,
 }: CatNftCardProps) {
   return (
     <Card className="overflow-hidden p-0">
@@ -141,6 +147,24 @@ export function CatNftCard({
           <p className="text-sm text-muted-foreground text-center">
             {classification.sceneDescription}
           </p>
+        </div>
+      )}
+
+      {discovererName && (
+        <div className="px-4">
+          <div className="text-sm font-semibold text-center mb-2 flex items-center justify-center gap-2">
+            <Binoculars className="h-4 w-4" />
+            <span>
+              Discovered by {" "}
+              {discovererAddress ? (
+                <Link href={`/u/${discovererAddress}`} className="underline">
+                  {discovererName}
+                </Link>
+              ) : (
+                discovererName
+              )}
+            </span>
+          </div>
         </div>
       )}
 

@@ -5,6 +5,7 @@ import { worldCat1155Abi } from "@/lib/web3/abi/Catlas1155";
 import { getPublicClient } from "@/lib/web3/client";
 import { ipfsToHttp } from "@/lib/ipfs/gateway";
 import CatNftWithLikes from "@/components/nft/CatNftWithLikes";
+import { Binoculars } from "lucide-react";
 import { getSupabaseClient } from "@/lib/supabase/client";
 
 type Props = { params: { id: string } };
@@ -73,15 +74,14 @@ export default async function CatPage({ params }: Props) {
   return (
     <section className="py-8">
       <div className="mx-auto w-full max-w-md">
-        <CatNftWithLikes tokenId={idNum} classification={classification} imageUrl={imageUrl} location={location} />
-        {creator && (
-          <div className="mt-3 text-center text-sm text-muted-foreground">
-            Discovered by {" "}
-            <Link href={`/u/${creator}`} className="underline">
-              {displayName || shorten(creator)}
-            </Link>
-          </div>
-        )}
+        <CatNftWithLikes
+          tokenId={idNum}
+          classification={classification}
+          imageUrl={imageUrl}
+          location={location}
+          discovererName={(displayName || (creator ? shorten(creator) : null))}
+          discovererAddress={creator || null}
+        />
       </div>
       
     </section>
