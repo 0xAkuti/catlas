@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { getPublicClient } from "@/lib/web3/client";
 import { worldCat1155Abi } from "@/lib/web3/abi/Catlas1155";
 import { catlasChain } from "@/lib/web3/client";
+import { PawPrint } from "lucide-react";
 
 async function getCharityInfo(): Promise<{ address: `0x${string}` | null; balanceEth: string | null }> {
   try {
@@ -95,35 +96,36 @@ export default async function Home() {
       </div>
 
       <div className="mx-auto mt-12 max-w-4xl">
-        <div className="grid gap-4 sm:grid-cols-3">
-          <Card className="p-4">
-            <h3 className="text-sm font-semibold mb-1">1. Snap & analyze</h3>
+        <div className="grid gap-2 sm:gap-4 sm:grid-cols-3">
+          <div className="p-3 sm:p-4 sm:rounded-xl sm:border">
+            <div className="flex items-center gap-2 mb-1">
+              <PawPrint size={24} className="text-muted-foreground" />
+              <h3 className="text-sm font-semibold">Snap & analyze</h3>
+            </div>
             <p className="text-sm text-muted-foreground">Upload and crop a photo. AI helps describe the cat and scene.</p>
-          </Card>
-          <Card className="p-4">
-            <h3 className="text-sm font-semibold mb-1">2. Mint & share</h3>
+          </div>
+          <div className="p-3 sm:p-4 sm:rounded-xl sm:border">
+            <div className="flex items-center gap-2 mb-1">
+              <PawPrint size={24} className="text-muted-foreground" />
+              <h3 className="text-sm font-semibold">Mint & share</h3>
+            </div>
             <p className="text-sm text-muted-foreground">Publish as an ERC‑1155 NFT and share your discovery.</p>
-          </Card>
-          <Card className="p-4">
-            <h3 className="text-sm font-semibold mb-1">3. Support charity</h3>
-            <p className="text-sm text-muted-foreground">Every mint splits earnings equally—discoverer, Catlas, charity.</p>
-          </Card>
+          </div>
+          <div className="p-3 sm:p-4 sm:rounded-xl sm:border">
+            <div className="flex items-center gap-2 mb-1">
+              <PawPrint size={24} className="text-muted-foreground" />
+              <h3 className="text-sm font-semibold">Support charity</h3>
+            </div>
+            <p className="text-sm text-muted-foreground">Every mint splits earnings equally between discoverer, Catlas, <a href="https://pawthereum.com" target="_blank" rel="noopener noreferrer" className="underline">animal welfare charity</a>.</p>
+          </div>
         </div>
       </div>
 
-      <div className="mx-auto mt-12 max-w-6xl">
-        <div className="relative w-full overflow-hidden rounded-xl border">
-          <div className="relative w-full h-[220px] sm:h-[280px] md:h-[360px] lg:h-[420px]">
-            <Image
-              src="/section-banner.png"
-              alt="Catlas banner"
-              fill
-              sizes="100vw"
-              className="object-cover"
-              priority={false}
-            />
-          </div>
-        </div>
+      <div className="mt-12 relative left-1/2 right-1/2 w-screen -ml-[50vw] -mr-[50vw]">
+        <div
+          className="h-[220px] sm:h-[280px] md:h-[360px] lg:h-[420px] w-screen marquee-bg"
+          style={{ backgroundImage: 'url(/section-banner.png)' }}
+        />
       </div>
 
       <div className="mx-auto mt-12 max-w-3xl text-center">
@@ -131,7 +133,7 @@ export default async function Home() {
         <h3 className="text-lg font-semibold">Turn moments into impact</h3>
         <p className="mt-4 text-center text-sm text-muted-foreground">
           Every discovery can become a collectible. Minting splits proceeds equally between the discoverer,
-          Catlas, and our charity partner—supporting real cats with every mint.
+          Catlas, and <a href="https://pawthereum.com" target="_blank" rel="noopener noreferrer" className="underline">animal welfare charity</a>, supporting real cats with every mint.
         </p>
           <div className="mt-3 flex items-center justify-center gap-3">
             <Link

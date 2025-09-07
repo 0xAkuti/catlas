@@ -120,3 +120,15 @@
     @apply bg-background text-foreground font-sans;
   }
 }
+
+@keyframes marqueeX {
+  0% { background-position-x: 0; }
+  100% { background-position-x: 200%; }
+}
+
+.marquee-bg {
+  background-repeat: repeat-x;
+  background-size: auto 100%;
+  background-position: 0 50%;
+  animation: marqueeX 20s linear infinite;
+}
