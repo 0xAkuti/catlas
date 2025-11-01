@@ -19,21 +19,21 @@ Think Pokémon GO meets Zora, but for cat lovers. When you spot a street cat, sn
 
 ## Key Features
 
-Global Cat Map: Real-time uploads create a living map of street cats worldwide
-Earn While You Explore: Cat discoverers earn rewards when others mint their photos as NFTs
-AI-Powered Discovery: Smart search finds cats by location, breed, or unique features
-AI-Powered Cat check: AI will verify uploaded images, detect cat breed and also if the cat has welfare concerns and needs help
-Built-in Charity: One-third of all NFT sales goes to animal rescue organizations (defined by smart contract)
-Community Building: Leaderboards and local meetups bring cat lovers together in person
-Decentralized Storage: Cat photos and NTF metadata are stored using IPFS
+- Global Cat Map: Real-time uploads create a living map of street cats worldwide
+- Earn While You Explore: Cat discoverers earn rewards when others mint their photos as NFTs
+- AI-Powered Discovery: Smart search finds cats by location, breed, or unique features
+- AI-Powered Cat check: AI will verify uploaded images, detect cat breed and also if the cat has welfare concerns and needs help
+- Built-in Charity: One-third of all NFT sales goes to animal rescue organizations (defined by smart contract)
+- Community Building: Leaderboards and local meetups bring cat lovers together in person
+- Decentralized Storage: Cat photos and NTF metadata are stored using IPFS
 
 ## TechStack
 
-Next.js Modern frontend using latest next.js
-ERC1155 NFT Custom and gas efficient ERC1155 contract using Solidity that contains all Catlas NFTs allows users to add new cats and shares profit with cat discoverers and charity
-Privy + viem for interacting with Base we use privy + viem/wagmi
-OpenRouter Using OpenRouter with Gemini and custom prompt to analyze uploaded cat images, extract features, check their health condition, describe the scene, etc
-IPFS + Supabase Most of the data (NFT token data and images) is stored decentralized on IPFS, only likes are stored in our database, we also use the database for faster data querying
+- Next.js Modern frontend using latest next.js
+- ERC1155 NFT Custom and gas efficient ERC1155 contract using Solidity that contains all Catlas NFTs allows users to add new cats and shares profit with cat discoverers and charity
+- Privy + viem for interacting with Base we use privy + viem/wagmi
+- OpenRouter Using OpenRouter with Gemini and custom prompt to analyze uploaded cat images, extract features, check their health condition, describe the scene, etc
+- IPFS + Supabase Most of the data (NFT token data and images) is stored decentralized on IPFS, only likes are stored in our database, we also use the database for faster data querying
 
 ## Contract Address
 Catlas is deployed on multiple chains under the same address `0x95e73cbbc2cd417c13362442f24515eaf8f167dc`:
