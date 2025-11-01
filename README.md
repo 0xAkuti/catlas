@@ -37,6 +37,7 @@ IPFS + Supabase Most of the data (NFT token data and images) is stored decentral
 
 ## Contract Address 
 Deployed on Base: https://basescan.org/address/0x95e73cbbc2cd417c13362442f24515eaf8f167dc
+
 Live on Opensea: https://opensea.io/collection/catlas
 
 ## Live Demo
