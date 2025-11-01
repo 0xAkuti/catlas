@@ -1,6 +1,6 @@
 # 🐾 Calas 🌍
 
-Catlas is a playful social app that lets you explore your neighborhood and the world. Snap a street cat, pin it on the map, and share the joy with cat lovers everywhere. Built for Base Batches 002: Builder Track.
+Catlas is a playful social app that lets you explore your neighborhood and the world. Snap a street cat, pin it on the map, and share the joy with cat lovers everywhere.
 
 
 ## The Problem We're Solving
@@ -35,12 +35,11 @@ Privy + viem for interacting with Base we use privy + viem/wagmi
 OpenRouter Using OpenRouter with Gemini and custom prompt to analyze uploaded cat images, extract features, check their health condition, describe the scene, etc
 IPFS + Supabase Most of the data (NFT token data and images) is stored decentralized on IPFS, only likes are stored in our database, we also use the database for faster data querying
 
-## Contract Address 
-Deployed on Base: https://basescan.org/address/0x95e73cbbc2cd417c13362442f24515eaf8f167dc
-
-Live on Opensea: https://opensea.io/collection/catlas
-
-## Live Demo
-https://catlas.xyz 
-
-
+## Contract Address
+Catlas is deployed on multiple chains under the same address `0x95e73cbbc2cd417c13362442f24515eaf8f167dc`:
+- Deployed on Base:
+  - Deployed on Base: https://basescan.org/address/0x95e73cbbc2cd417c13362442f24515eaf8f167dc
+  - Live on Opensea: https://opensea.io/collection/catlas
+- Deployed on Flow:
+  - Deployed on Flow mainnet https://evm.flowscan.io/address/0x95e73cbbc2cd417c13362442f24515eaf8f167dc
+  - Live on OpenSea: https://opensea.io/collection/catlas-flow
