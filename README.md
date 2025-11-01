@@ -31,12 +31,13 @@ Decentralized Storage: Cat photos and NTF metadata are stored using IPFS
 
 Next.js Modern frontend using latest next.js
 ERC1155 NFT Custom and gas efficient ERC1155 contract using Solidity that contains all Catlas NFTs allows users to add new cats and shares profit with cat discoverers and charity
-Privy + viem for interacting with Rise Testnet we use privy + viem/wagmi
+Privy + viem for interacting with Base we use privy + viem/wagmi
 OpenRouter Using OpenRouter with Gemini and custom prompt to analyze uploaded cat images, extract features, check their health condition, describe the scene, etc
 IPFS + Supabase Most of the data (NFT token data and images) is stored decentralized on IPFS, only likes are stored in our database, we also use the database for faster data querying
 
 ## Contract Address 
-https://explorer.testnet.riselabs.xyz/address/0x5bA687A58b988096402EA8b839EA0583FeB9C1FB
+Deployed on Base: https://basescan.org/address/0x95e73cbbc2cd417c13362442f24515eaf8f167dc
+Live on Opensea: https://opensea.io/collection/catlas
 
 ## Live Demo
 https://catlas.xyz 
